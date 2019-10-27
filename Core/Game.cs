@@ -1,13 +1,16 @@
 ﻿using SadConsole;
 using Microsoft.Xna.Framework;
 using Emberpoint.Core.Objects;
+using Microsoft.Xna.Framework.Input;
+using Emberpoint.Core.Extensions;
 
 namespace Emberpoint.Core
 {
     public static class Game
     {
         public static Console Map { get; private set; }
-        private static EmberGrid Grid { get; set; }
+        public static EmberGrid Grid { get; private set; }
+        public static Player Player { get; private set; }
 
         private static void Main()
         {
@@ -16,10 +19,17 @@ namespace Emberpoint.Core
 
             // Hook the start event so we can add consoles to the system.
             SadConsole.Game.OnInitialize = Init;
+            // Hook the update event so we can check for key presses.
+            SadConsole.Game.OnUpdate = Update;
 
             // Start the game.
             SadConsole.Game.Instance.Run();
             SadConsole.Game.Instance.Dispose();
+        }
+
+        private static void Update(GameTime gameTime)
+        {
+            Player.CheckForMovement();
         }
 
         private static void Init()
@@ -34,8 +44,8 @@ namespace Emberpoint.Core
             Map.Position = new Point(25, 5);
 
             // Instantiate player in the middle of the map
-            var player = new Player(new Point(35, 15));
-            player.RenderObject(Map);
+            Player = new Player(new Point(35, 15));
+            Player.RenderObject(Map);
 
             Global.CurrentScreen = mainConsole;
         }
