@@ -1,14 +1,18 @@
 ﻿using SadConsole;
 using Microsoft.Xna.Framework;
+using Emberpoint.Core.Objects;
 
 namespace Emberpoint.Core
 {
     public static class Game
     {
-        static void Main()
+        public static Console Map { get; private set; }
+        private static EmberGrid Grid { get; set; }
+
+        private static void Main()
         {
             // Setup the engine and create the main window.
-            SadConsole.Game.Create(80, 25);
+            SadConsole.Game.Create(120, 40);
 
             // Hook the start event so we can add consoles to the system.
             SadConsole.Game.OnInitialize = Init;
@@ -18,13 +22,36 @@ namespace Emberpoint.Core
             SadConsole.Game.Instance.Dispose();
         }
 
-        static void Init()
+        private static void Init()
         {
-            var console = new Console(80, 25);
-            console.Fill(new Rectangle(3, 3, 23, 3), Color.Violet, Color.Black, 0, 0);
-            console.Print(40 - "Emberpoint".Length / 2, 4, "Emberpoint");
+            Map = new Console(70, 30);
+            SetMapArea(70, 30);
 
-            Global.CurrentScreen = console;
+            var mainConsole = new Console(120, 40);
+            mainConsole.Children.Add(Map);
+            mainConsole.Print(60 - "Emberpoint".Length / 2, 2, "Emberpoint");
+
+            Map.Position = new Point(25, 5);
+
+            // Instantiate player in the middle of the map
+            var player = new Player(new Point(35, 15));
+            player.RenderObject(Map);
+
+            Global.CurrentScreen = mainConsole;
+        }
+
+        private static void SetMapArea(int gridSizeX, int gridSizeY)
+        {
+            var cells = new EmberCell[gridSizeX * gridSizeY];
+            for (int x=0; x < gridSizeX; x++)
+            {
+                for (int y = 0; y < gridSizeY; y++)
+                {
+                    cells[y * gridSizeX + x] = new EmberCell(new Point(x, y), '.', Color.Green);
+                }
+            }
+            Grid = new EmberGrid(gridSizeX, gridSizeY, cells);
+            Grid.RenderObject(Map);
         }
     }
 }

@@ -4,10 +4,11 @@ namespace Emberpoint.Core.Objects.Interfaces
 {
     public interface IEmberGrid : IRenderable
     {
-        int GridSize { get; }
-        IEmberCell GetCell(Point position);
-        IEmberCell GetCell(int x, int y);
-        void SetCell(IEmberCell cell);
-        IEmberCell[] GetNeighbors(IEmberCell cell);
+        int GridSizeX { get; }
+        int GridSizeY { get; }
+        EmberCell GetCell(Point position);
+        EmberCell GetCell(int x, int y);
+        void SetCell(EmberCell cell);
+        EmberCell[] GetNeighbors(EmberCell cell);
     }
 }

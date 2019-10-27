@@ -1,7 +1,9 @@
-﻿namespace Emberpoint.Core.Objects.Interfaces
+﻿using SadConsole;
+
+namespace Emberpoint.Core.Objects.Interfaces
 {
     public interface IRenderable
     {
-        void RenderObject();
+        void RenderObject(Console console);
     }
 }

@@ -3,48 +3,51 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Console = SadConsole.Console;
 
 namespace Emberpoint.Core.Objects
 {
     public class EmberGrid : IEmberGrid
     {
-        private IEmberCell[] Cells { get; }
+        private EmberCell[] Cells { get; }
 
-        public int GridSize { get; }
+        public int GridSizeX { get; }
+        public int GridSizeY { get; }
 
-        public EmberGrid(int gridSize, IEmberCell[] cells)
+        public EmberGrid(int gridSizeX, int gridSizeY, EmberCell[] cells)
         {
-            GridSize = gridSize;
+            GridSizeX = gridSizeX;
+            GridSizeY = gridSizeY;
             Cells = cells;
         }
 
-        public IEmberCell GetCell(Point position)
+        public EmberCell GetCell(Point position)
         {
-            return Cells[position.Y * GridSize + position.X];
+            return Cells[position.Y * GridSizeX + position.X];
         }
 
-        public IEmberCell GetCell(int x, int y)
+        public EmberCell GetCell(int x, int y)
         {
-            return Cells[y * GridSize + x];
+            return Cells[y * GridSizeX + x];
         }
 
-        public void RenderObject()
+        public void RenderObject(Console console)
         {
-
+            console.SetSurface(Cells, GridSizeX, GridSizeY);
         }
 
-        public void SetCell(IEmberCell cell)
+        public void SetCell(EmberCell cell)
         {
-            Cells[cell.Position.Y * GridSize + cell.Position.X] = cell;
+            Cells[cell.Position.Y * GridSizeX + cell.Position.X] = cell;
         }
 
-        public IEmberCell[] GetNeighbors(IEmberCell cell)
+        public EmberCell[] GetNeighbors(EmberCell cell)
         {
             int x = cell.Position.X;
             int y = cell.Position.Y;
 
             var points = new List<Point>();
-            if (!InBounds(x, y)) return Array.Empty<IEmberCell>();
+            if (!InBounds(x, y)) return Array.Empty<EmberCell>();
 
             if (InBounds(x + 1, y)) points.Add(new Point(x + 1, y));
             if (InBounds(x - 1, y)) points.Add(new Point(x - 1, y));
@@ -60,7 +63,7 @@ namespace Emberpoint.Core.Objects
 
         private bool InBounds(int x, int y)
         {
-            return x >= 0 && y >= 0 && x < GridSize && y < GridSize;
+            return x >= 0 && y >= 0 && x < GridSizeX && y < GridSizeY;
         }
     }
 }
