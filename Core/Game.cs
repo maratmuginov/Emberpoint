@@ -1,8 +1,6 @@
 ﻿using SadConsole;
 using Microsoft.Xna.Framework;
 using Emberpoint.Core.Objects;
-using Microsoft.Xna.Framework.Input;
-using Emberpoint.Core.Extensions;
 
 namespace Emberpoint.Core
 {
