@@ -7,7 +7,7 @@ using Console = SadConsole.Console;
 
 namespace Emberpoint.Core.Objects
 {
-    public class EmberGrid : IEmberGrid
+    public class EmberGrid : IRenderable
     {
         private EmberCell[] Cells { get; }
 
