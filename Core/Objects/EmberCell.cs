@@ -14,6 +14,7 @@ namespace Emberpoint.Core.Objects
             Glyph = glyph;
             Foreground = foreground;
             Background = Color.Black;
+            Walkable = true;
         }
 
         public EmberCell(Point position, int glyph, Color foreground, Color background)
@@ -22,6 +23,7 @@ namespace Emberpoint.Core.Objects
             Glyph = glyph;
             Foreground = foreground;
             Background = background;
+            Walkable = true;
         }
     }
 }

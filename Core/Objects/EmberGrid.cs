@@ -61,9 +61,14 @@ namespace Emberpoint.Core.Objects
             return points.Select(a => GetCell(a)).ToArray();
         }
 
-        private bool InBounds(int x, int y)
+        public bool InBounds(int x, int y)
         {
             return x >= 0 && y >= 0 && x < GridSizeX && y < GridSizeY;
+        }
+
+        public bool InBounds(Point position)
+        {
+            return position.X >= 0 && position.Y >= 0 && position.X < GridSizeX && position.Y < GridSizeY;
         }
     }
 }

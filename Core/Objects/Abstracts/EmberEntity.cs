@@ -18,14 +18,20 @@ namespace Emberpoint.Core.Objects.Abstracts
             Animation.CurrentFrame[0].Glyph = glyph;
         }
 
-        public void MoveTowards(Point position)
+        public bool CanMoveTowards(Point position)
         {
-            Position = position;
+            return Game.Grid.InBounds(position) && Game.Grid.GetCell(position).Walkable;
         }
 
         public void RenderObject(Console console)
         {
             console.Children.Add(this);
+        }
+
+        public void MoveTowards(Point position, bool checkCanMove = true)
+        {
+            if (checkCanMove && !CanMoveTowards(position)) return;
+            Position = position;
         }
 
         private static class EmberEntityDatabase

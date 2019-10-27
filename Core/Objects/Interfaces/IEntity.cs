@@ -5,6 +5,7 @@ namespace Emberpoint.Core.Objects.Interfaces
     public interface IEntity : IRenderable
     {
         Point Position { get; set; }
-        void MoveTowards(Point position);
+        void MoveTowards(Point position, bool checkCanMove = true);
+        bool CanMoveTowards(Point position);
     }
 }
