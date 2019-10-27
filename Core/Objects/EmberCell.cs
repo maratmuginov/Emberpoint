@@ -1,23 +1,27 @@
-﻿using Emberpoint.Core.Objects.Interfaces;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using SadConsole;
 
 namespace Emberpoint.Core.Objects
 {
-    public class EmberCell : IEmberCell
+    public class EmberCell : Cell
     {
         public Point Position { get; }
+        public bool Walkable { get; set; }
 
-        public int Character { get; private set; }
-
-        public EmberCell(Point position, int character)
+        public EmberCell(Point position, int glyph, Color foreground)
         {
             Position = position;
-            Character = character;
+            Glyph = glyph;
+            Foreground = foreground;
+            Background = Color.Black;
         }
 
-        public IEmberCell[] GetNeighbors(IEmberGrid grid)
+        public EmberCell(Point position, int glyph, Color foreground, Color background)
         {
-            return grid.GetNeighbors(this);
+            Position = position;
+            Glyph = glyph;
+            Foreground = foreground;
+            Background = background;
         }
     }
 }
