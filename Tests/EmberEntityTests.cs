@@ -21,7 +21,11 @@ namespace Tests
                 // Run only one frame for tests
                 SadConsole.Game.Instance.RunOneFrame();
             }
-            catch(NoAudioHardwareException)
+            catch (System.NullReferenceException)
+            {
+
+            }
+            catch (NoAudioHardwareException)
             {
                 // Ignore because appveyor is troubled by it
             }
@@ -33,6 +37,10 @@ namespace Tests
             try
             {
                 SadConsole.Game.Instance.Dispose();
+            }
+            catch (System.NullReferenceException)
+            {
+
             }
             catch (NoAudioHardwareException)
             {
