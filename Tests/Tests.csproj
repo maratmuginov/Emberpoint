@@ -10,7 +10,7 @@
     <Product>Emberpoint</Product>
     <RepositoryUrl>https://github.com/Venom0us/Emberpoint</RepositoryUrl>
     <Copyright>Venomous</Copyright>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
