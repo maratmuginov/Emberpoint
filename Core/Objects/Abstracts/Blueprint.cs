@@ -9,18 +9,36 @@ namespace Emberpoint.Core.Objects.Abstracts
 {
     public abstract class Blueprint<T> where T : EmberCell, new()
     {
+        public int GridSizeX { get; private set; }
+        public int GridSizeY { get; private set; }
+
+        public Blueprint()
+        {
+            var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, GetType().Name + ".json");
+            var config = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(blueprintConfigPath));
+
+            if (!File.Exists(blueprintConfigPath))
+                throw new Exception("Blueprint config file was not found for " + GetType().Name);
+
+            GridSizeX = config.GridSizeX;
+            GridSizeY = config.GridSizeY;
+        }
+
+        /// <summary>
+        /// Retrieves the cells from the blueprint.txt file and blueprint.json config file.
+        /// Cells are not cached by default.
+        /// </summary>
+        /// <returns></returns>
         public T[] GetCells()
         {
             var name = GetType().Name;
-            var root = GetApplicationRoot();
-            var specialCharactersPath = Path.Combine(root, "Core", "Objects", "Blueprints", "SpecialCharactersConfig.json");
-            var blueprintPath = Path.Combine(root, "Core", "Objects", "Blueprints", name + ".txt");
-            var blueprintConfigPath = Path.Combine(root, "Core", "Objects", "Blueprints", "Config", name + ".json");
+            var blueprintPath = Path.Combine(Constants.Blueprint.BlueprintsPath, name + ".txt");
+            var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, name + ".json");
 
-            if (!File.Exists(blueprintPath) || !File.Exists(blueprintConfigPath) || !File.Exists(specialCharactersPath)) 
+            if (!File.Exists(blueprintPath) || !File.Exists(blueprintConfigPath) || !File.Exists(Constants.Blueprint.SpecialCharactersPath)) 
                 return Array.Empty<T>();
 
-            var specialConfig = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(specialCharactersPath));
+            var specialConfig = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(Constants.Blueprint.SpecialCharactersPath));
             var specialChars = specialConfig.Tiles.ToDictionary(a => a.Glyph, a => a);
 
             var config = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(blueprintConfigPath));
@@ -64,12 +82,6 @@ namespace Emberpoint.Core.Objects.Abstracts
             if (prop != null)
                 return (Color)prop.GetValue(null, null);
             return default;
-        }
-
-        private string GetApplicationRoot()
-        {
-            var appRoot = AppContext.BaseDirectory.Substring(0, AppContext.BaseDirectory.LastIndexOf("\\bin"));
-            return appRoot.Substring(0, appRoot.LastIndexOf("\\") + 1);
         }
 
         [Serializable]

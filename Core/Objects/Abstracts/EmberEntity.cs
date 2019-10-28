@@ -11,7 +11,7 @@ namespace Emberpoint.Core.Objects.Abstracts
 
         public EmberEntity(Color foreground, Color background, int glyph, int width = 1, int height = 1) : base(width, height)
         {
-            ObjectId = EmberEntityDatabase.GetUniqueId();
+            ObjectId = EntityManager.GetUniqueId();
 
             Animation.CurrentFrame[0].Foreground = foreground;
             Animation.CurrentFrame[0].Background = background;
@@ -20,7 +20,7 @@ namespace Emberpoint.Core.Objects.Abstracts
 
         public bool CanMoveTowards(Point position)
         {
-            return Game.Grid.InBounds(position) && Game.Grid.GetCell(position).Walkable;
+            return Game.Grid.InBounds(position) && Game.Grid.GetCell(position).Walkable && !EntityManager.EntityExistsAt(position);
         }
 
         public void RenderObject(Console console)
@@ -32,15 +32,6 @@ namespace Emberpoint.Core.Objects.Abstracts
         {
             if (checkCanMove && !CanMoveTowards(position)) return;
             Position = position;
-        }
-
-        private static class EmberEntityDatabase
-        {
-            private static int _currentId;
-            public static int GetUniqueId()
-            {
-                return _currentId++;
-            }
         }
     }
 }
