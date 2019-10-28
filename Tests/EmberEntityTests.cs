@@ -2,6 +2,7 @@
 using Emberpoint.Core.Objects;
 using Emberpoint.Core.Objects.Abstracts;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using NUnit.Framework;
 
 namespace Tests
@@ -12,17 +13,31 @@ namespace Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            // Setup the engine and create the main window.
-            SadConsole.Game.Create(Constants.GameWindowWidth, Constants.GameWindowHeight);
+            try
+            {
+                // Setup the engine and create the main window.
+                SadConsole.Game.Create(Constants.GameWindowWidth, Constants.GameWindowHeight);
 
-            // Run only one frame for tests
-            SadConsole.Game.Instance.RunOneFrame();
+                // Run only one frame for tests
+                SadConsole.Game.Instance.RunOneFrame();
+            }
+            catch(NoAudioHardwareException)
+            {
+                // Ignore because appveyor is troubled by it
+            }
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            SadConsole.Game.Instance.Dispose();
+            try
+            {
+                SadConsole.Game.Instance.Dispose();
+            }
+            catch (NoAudioHardwareException)
+            {
+                // Ignore because appveyor is troubled by it
+            }
         }
 
         [TearDown]
