@@ -2,15 +2,14 @@ version: 1.0.{build}
 image: Visual Studio 2019
 configuration: Release
 before_build:
-- cmd: >-
-    dotnet restore
-
-    nuget restore
-    
 - ps: >-
     (New-Object Net.WebClient).DownloadFile('https://github.com/MonoGame/MonoGame/releases/download/v3.7/MonoGameSetup.exe', 'C:\MonoGameSetup.exe')
     
     Invoke-Command -ScriptBlock {C:\MonoGameSetup.exe /S /v/qn}
+- cmd: >-
+    dotnet restore
+
+    nuget restore
 build:
   parallel: true
   verbosity: minimal
