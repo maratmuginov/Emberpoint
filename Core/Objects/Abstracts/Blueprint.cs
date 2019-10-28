@@ -63,18 +63,22 @@ namespace Emberpoint.Core.Objects.Abstracts
         [Serializable]
         private class BlueprintConfig
         {
+#pragma warning disable 0649
             public int GridSizeX;
             public int GridSizeY;
             public BlueprintTile[] Tiles;
+#pragma warning restore 0649
         }
 
         [Serializable]
         private class BlueprintTile
         {
+#pragma warning disable 0649
             public char Glyph;
             public string Name;
             public bool Walkable;
             public string Foreground;
+#pragma warning restore 0649
         }
     }
 }
