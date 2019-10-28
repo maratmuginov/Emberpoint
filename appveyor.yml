@@ -3,9 +3,10 @@ image: Visual Studio 2019
 configuration: Release
 before_build:
 - ps: >-
-    (New-Object Net.WebClient).DownloadFile('https://github.com/MonoGame/MonoGame/releases/download/v3.7/MonoGameSetup.exe', 'C:\MonoGameSetup.exe')
+    (New-Object Net.WebClient).DownloadFile('https://github.com/MonoGame/MonoGame/releases/download/v3.7.1/MonoGameSetup.exe', 'C:\MonoGameSetup.exe')
     
     Invoke-Command -ScriptBlock {C:\MonoGameSetup.exe /S /v/qn}
+    Start-Sleep -s 5
 - cmd: >-
     dotnet restore
 
