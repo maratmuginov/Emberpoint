@@ -67,7 +67,7 @@ namespace Tests
         [Test]
         public void InBoundsCheck_ReturnsCorrectResult() 
         {
-            Assert.IsFalse(_grid.InBounds(-5, 10));
+            Assert.IsTrue(_grid.InBounds(-5, 10));
             Assert.IsTrue(_grid.InBounds(0, 0));
             Assert.IsFalse(_grid.InBounds(_grid.GridSizeX + 2, _grid.GridSizeY + 2));
         }
