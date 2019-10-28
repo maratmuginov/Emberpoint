@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -6,6 +6,11 @@
     <RootNamespace>Emberpoint.Core</RootNamespace>
     <ApplicationIcon />
     <StartupObject />
+    <Authors>Venomous</Authors>
+    <Product>Emberpoint</Product>
+    <Copyright>Venomous</Copyright>
+    <RepositoryUrl>https://github.com/Venom0us/Emberpoint</RepositoryUrl>
+    <RepositoryType>OpenSource</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
