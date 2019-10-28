@@ -9,12 +9,6 @@
 	  "foreground": "Gray",
     },
     {
-      "glyph": "+",
-      "name": "door",
-      "walkable": true,
-	  "foreground": "Brown",
-    },
-    {
       "glyph": "#",
       "name": "wall",
       "walkable": false,

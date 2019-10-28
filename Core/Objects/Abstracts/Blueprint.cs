@@ -9,20 +9,32 @@ namespace Emberpoint.Core.Objects.Abstracts
 {
     public abstract class Blueprint<T> where T : EmberCell, new()
     {
-        public virtual T[] GetCells()
+        public T[] GetCells()
         {
             var name = GetType().Name;
             var root = GetApplicationRoot();
+            var specialCharactersPath = Path.Combine(root, "Core", "Objects", "Blueprints", "SpecialCharactersConfig.json");
             var blueprintPath = Path.Combine(root, "Core", "Objects", "Blueprints", name + ".txt");
             var blueprintConfigPath = Path.Combine(root, "Core", "Objects", "Blueprints", "Config", name + ".json");
 
-            if (!File.Exists(blueprintPath) || !File.Exists(blueprintConfigPath)) return Array.Empty<T>();
+            if (!File.Exists(blueprintPath) || !File.Exists(blueprintConfigPath) || !File.Exists(specialCharactersPath)) 
+                return Array.Empty<T>();
+
+            var specialConfig = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(specialCharactersPath));
+            var specialChars = specialConfig.Tiles.ToDictionary(a => a.Glyph, a => a);
 
             var config = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(blueprintConfigPath));
+            var tiles = config.Tiles.ToDictionary(a => a.Glyph, a => a);
+
+            foreach (var tile in tiles)
+            {
+                if (specialChars.ContainsKey(tile.Key))
+                    throw new Exception("Glyph '" + tile.Key + "': is reserved as a special character and cannot be used in " + name);
+            }
+
             var blueprint = File.ReadAllText(blueprintPath).Replace("\r", "").Split('\n');
 
             var cells = new List<T>();
-            var tiles = config.Tiles.ToDictionary(a => a.Glyph, a => a);
             for (int y=0; y < config.GridSizeY; y++)
             {
                 for (int x = 0; x < config.GridSizeX; x++)
