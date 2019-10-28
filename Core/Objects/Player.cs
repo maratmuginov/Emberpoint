@@ -8,10 +8,8 @@ namespace Emberpoint.Core.Objects
 {
     public class Player : EmberEntity
     {
-        public Player(Point position) : base(Color.White, Color.Transparent, '@', 1, 1)
-        {
-            Position = position;
-        }
+        public Player() : base(Constants.Player.Foreground, Color.Transparent, Constants.Player.Character, 1, 1)
+        { }
 
         public void CheckForMovement()
         {

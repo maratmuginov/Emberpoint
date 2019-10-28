@@ -10,23 +10,32 @@ namespace Emberpoint.Core.Objects
 {
     public class EmberGrid : IRenderable
     {
-        private EmberCell[] Cells { get; }
+        private EmberCell[] _cells;
+        private EmberCell[] Cells
+        {
+            get
+            {
+                return _cells ?? (_cells = Blueprint.GetCells());
+            }
+        }
 
         public int GridSizeX { get; }
         public int GridSizeY { get; }
 
-        public EmberGrid(int gridSizeX, int gridSizeY, Blueprint<EmberCell> blueprint)
+        public Blueprint<EmberCell> Blueprint { get; }
+
+        public EmberGrid(Blueprint<EmberCell> blueprint)
         {
-            GridSizeX = gridSizeX;
-            GridSizeY = gridSizeY;
-            Cells = blueprint.GetCells();
+            GridSizeX = blueprint.GridSizeX;
+            GridSizeY = blueprint.GridSizeY;
+            Blueprint = blueprint;
         }
 
         public EmberGrid(int gridSizeX, int gridSizeY, EmberCell[] cells)
         {
             GridSizeX = gridSizeX;
             GridSizeY = gridSizeY;
-            Cells = cells;
+            _cells = cells;
         }
 
         public EmberCell GetCell(Point position)

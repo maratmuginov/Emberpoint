@@ -2,19 +2,23 @@
 using Microsoft.Xna.Framework;
 using Emberpoint.Core.Objects;
 using Emberpoint.Core.Objects.Blueprints;
+using Console = SadConsole.Console;
 
 namespace Emberpoint.Core
 {
     public static class Game
     {
         public static Console Map { get; private set; }
-        public static EmberGrid Grid { get; private set; }
+        public static EmberGrid Grid
+        {
+            get { return GridManager.Grid; } 
+        }
         public static Player Player { get; private set; }
 
         private static void Main()
         {
             // Setup the engine and create the main window.
-            SadConsole.Game.Create(120, 40);
+            SadConsole.Game.Create(Constants.GameWindowWidth, Constants.GameWindowHeight);
 
             // Hook the start event so we can add consoles to the system.
             SadConsole.Game.OnInitialize = Init;
@@ -33,26 +37,23 @@ namespace Emberpoint.Core
 
         private static void Init()
         {
-            Map = new Console(70, 30);
-            SetMapArea(70, 30);
+            Map = new Console(Constants.Map.Width, Constants.Map.Height);
+            GridManager.InitializeBlueprint<HouseBlueprint>();
+            Grid.RenderObject(Map);
 
-            var mainConsole = new Console(120, 40);
+            SadConsole.Game.Instance.Window.Title = Constants.GameTitle;
+
+            var mainConsole = new Console(Constants.GameWindowWidth, Constants.GameWindowHeight);
             mainConsole.Children.Add(Map);
-            mainConsole.Print(60 - "Emberpoint".Length / 2, 2, "Emberpoint");
+            mainConsole.Print(Constants.GameWindowWidth / 2 - Constants.GameTitle.Length / 2, 2, Constants.GameTitle);
 
             Map.Position = new Point(25, 5);
 
             // Instantiate player in the middle of the map
-            Player = new Player(new Point(35, 15));
+            Player = EntityManager.Create<Player>(new Point(Constants.Map.Width / 2, Constants.Map.Height / 2));
             Player.RenderObject(Map);
 
             Global.CurrentScreen = mainConsole;
-        }
-
-        private static void SetMapArea(int gridSizeX, int gridSizeY)
-        {
-            Grid = new EmberGrid(gridSizeX, gridSizeY, new HouseBlueprint());
-            Grid.RenderObject(Map);
         }
     }
 }
