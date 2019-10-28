@@ -12,6 +12,8 @@ I use the issue tracker to keep track of bugs and improvements to How-To-Open-So
 
 Visit the [issue tracker](https://github.com/Venom0us/Emberpoint/issues) to find a list of open issues that need attention.
 
+To prevent multiple people working on the same issue and causing conflicts, please put a comment on the issue.
+
 Fork, then clone the repo:
 
 ```sh
