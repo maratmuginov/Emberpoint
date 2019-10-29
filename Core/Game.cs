@@ -54,10 +54,6 @@ namespace Emberpoint.Core
             Player = EntityManager.Create<Player>(new Point(Constants.Map.Width / 2, Constants.Map.Height / 2));
             Player.RenderObject(Map);
 
-            var cell = GridManager.Grid.GetCell(Player.Position.Translate(2, 0));
-            cell.Walkable = false;
-            GridManager.Grid.SetCell(cell);
-
             Global.CurrentScreen = mainConsole;
         }
     }
