@@ -45,7 +45,7 @@ namespace Tests
             var entity = EntityManager.Create<TestEntity>(new Point(0, 0));
             var cell = _grid.GetCell(0, 1);
             cell.Walkable = false;
-            _grid.SetCell(cell);
+            _grid.SetCell(cell, true);
 
             Assert.IsFalse(entity.CanMoveTowards(new Point(0, 1)));
             Assert.IsTrue(entity.CanMoveTowards(new Point(1, 0)));
@@ -57,7 +57,7 @@ namespace Tests
             var entity = EntityManager.Create<TestEntity>(new Point(0, 0));
             var cell = _grid.GetCell(0, 1);
             cell.Walkable = false;
-            _grid.SetCell(cell);
+            _grid.SetCell(cell, true);
 
             entity.MoveTowards(new Point(0, 1));
             Assert.AreEqual(new Point(0, 0), entity.Position);
@@ -77,7 +77,7 @@ namespace Tests
 
             var cell = _grid.GetCell(2, 0);
             cell.Walkable = false;
-            _grid.SetCell(cell);
+            _grid.SetCell(cell, true);
 
             Assert.IsFalse(entity.FieldOfView.BooleanFOV[3, 0]);
         }

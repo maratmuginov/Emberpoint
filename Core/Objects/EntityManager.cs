@@ -75,6 +75,18 @@ namespace Emberpoint.Core.Objects
             return GetEntityAt<EmberEntity>(position) != null;
         }
 
+        public static void RecalculatFieldOfView()
+        {
+            // Recalculate the fov of all entities
+            var entities = GetEntities<IEntity>();
+            foreach (var entity in entities.Where(a => a.FieldOfViewRadius > 0))
+            {
+                entity.FieldOfView.Calculate(entity.Position, entity.FieldOfViewRadius);
+                if (entity is Player)
+                    GridManager.Grid.DrawFieldOfView(entity);
+            }
+        }
+
         private static class EntityDatabase
         {
             public static readonly Dictionary<int, IEntity> Entities = new Dictionary<int, IEntity>();

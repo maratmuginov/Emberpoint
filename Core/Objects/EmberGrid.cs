@@ -87,7 +87,7 @@ namespace Emberpoint.Core.Objects
             return Cells[y * GridSizeX + x];
         }
 
-        public void SetCell(EmberCell cell)
+        public void SetCell(EmberCell cell, bool calculateEntitiesFov = false)
         {
             var originalCell = Cells[cell.Position.Y * GridSizeX + cell.Position.X];
 
@@ -96,17 +96,15 @@ namespace Emberpoint.Core.Objects
 
             // Copy the new cell data
             originalCell.CopyFrom(cell);
+
             if (updateFieldOfView)
             {
                 UpdateFieldOfView(cell.Position.X, cell.Position.Y);
 
-                // Recalculate the fov of all entities
-                var entities = EntityManager.GetEntities<IEntity>();
-                foreach (var entity in entities.Where(a => a.FieldOfViewRadius > 0))
+                if (calculateEntitiesFov)
                 {
-                    entity.FieldOfView.Calculate(entity.Position, entity.FieldOfViewRadius);
-                    if (entity is Player)
-                        DrawFieldOfView(entity);
+                    // Recalculate the fov of all entities
+                    EntityManager.RecalculatFieldOfView();
                 }
             }
         }
@@ -114,15 +112,6 @@ namespace Emberpoint.Core.Objects
         public void RenderObject(Console console)
         {
             console.SetSurface(Cells, GridSizeX, GridSizeY);
-        }
-
-        /// <summary>
-        /// Call this to re-render the map
-        /// </summary>
-        /// <param name="cell"></param>
-        public void RedrawMap()
-        {
-            Game.Map.IsDirty = true;
         }
 
         /// <summary>
@@ -136,7 +125,7 @@ namespace Emberpoint.Core.Objects
         }
 
         /// <summary>
-        /// Updates the FieldOfView data for the entire grid.
+        /// Updates the FieldOfView data for the entire grid and all the entities.
         /// </summary>
         public void UpdateFieldOfView()
         {
@@ -167,7 +156,9 @@ namespace Emberpoint.Core.Objects
                     SetCell(cell);
                 }
             }
-            RedrawMap();
+
+            // Redraw the map
+            Game.Map.IsDirty = true;
         }
 
         public EmberCell[] GetNeighbors(EmberCell cell)
