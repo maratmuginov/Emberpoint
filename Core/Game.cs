@@ -39,7 +39,7 @@ namespace Emberpoint.Core
         private static void Init()
         {
             Map = new Console(Constants.Map.Width, Constants.Map.Height);
-            GridManager.InitializeBlueprint<GroundFloorBlueprint>();
+            GridManager.InitializeBlueprint<HouseBlueprint>();
             Grid.RenderObject(Map);
 
             SadConsole.Game.Instance.Window.Title = Constants.GameTitle;
