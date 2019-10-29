@@ -6,13 +6,15 @@
       "glyph": ".",
       "name": "floor",
       "walkable": true,
-	  "foreground": "Gray",
+	  "foregroundFov" : "Brown",
+	  "foreground": "BurlyWood"
     },
     {
       "glyph": "#",
       "name": "wall",
       "walkable": false,
-	  "foreground": "Yellow",
+	  "foregroundFov" : "LightYellow",
+	  "foreground": "Yellow"
     }
   ]
 }

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Emberpoint.Core.Objects;
 using Emberpoint.Core.Objects.Blueprints;
 using Console = SadConsole.Console;
+using Emberpoint.Core.Extensions;
 
 namespace Emberpoint.Core
 {
@@ -52,6 +53,10 @@ namespace Emberpoint.Core
             // Instantiate player in the middle of the map
             Player = EntityManager.Create<Player>(new Point(Constants.Map.Width / 2, Constants.Map.Height / 2));
             Player.RenderObject(Map);
+
+            var cell = GridManager.Grid.GetCell(Player.Position.Translate(2, 0));
+            cell.Walkable = false;
+            GridManager.Grid.SetCell(cell);
 
             Global.CurrentScreen = mainConsole;
         }

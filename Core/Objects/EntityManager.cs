@@ -1,5 +1,7 @@
 ﻿using Emberpoint.Core.Objects.Abstracts;
+using Emberpoint.Core.Objects.Interfaces;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +15,7 @@ namespace Emberpoint.Core.Objects
         /// <typeparam name="T"></typeparam>
         /// <param name="position"></param>
         /// <returns></returns>
-        public static T Create<T>(Point position) where T : EmberEntity, new()
+        public static T Create<T>(Point position) where T : IEntity, new()
         {
             if (EntityExistsAt(position))
             {
@@ -24,33 +26,43 @@ namespace Emberpoint.Core.Objects
             {
                 Position = position
             };
-            EmberEntityDatabase.Entities.Add(entity.ObjectId, entity);
+            EntityDatabase.Entities.Add(entity.ObjectId, entity);
             return entity;
         }
 
         public static int GetUniqueId()
         {
-            return EmberEntityDatabase.GetUniqueId();
+            return EntityDatabase.GetUniqueId();
         }
 
         public static void Remove(EmberEntity entity)
         {
-            EmberEntityDatabase.Entities.Remove(entity.ObjectId);
+            EntityDatabase.Entities.Remove(entity.ObjectId);
         }
 
         public static void Clear()
         {
-            EmberEntityDatabase.Reset();
+            EntityDatabase.Reset();
         }
 
-        public static T GetEntityAt<T>(Point position) where T : EmberEntity
+        public static T[] GetEntities<T>(Func<T, bool> criteria = null) where T : IEntity
         {
-            return (T)EmberEntityDatabase.Entities.Values.SingleOrDefault(a => a.Position == position);
+            var collection = EntityDatabase.Entities.Values.ToArray().OfType<T>();
+            if (criteria != null)
+            {
+                collection = collection.Where(criteria.Invoke);
+            }
+            return collection.ToArray();
         }
 
-        public static T GetEntityAt<T>(int x, int y) where T : EmberEntity
+        public static T GetEntityAt<T>(Point position) where T : IEntity
         {
-            return (T)EmberEntityDatabase.Entities.Values.SingleOrDefault(a => a.Position.X == x && a.Position.Y == y);
+            return (T)EntityDatabase.Entities.Values.SingleOrDefault(a => a.Position == position);
+        }
+
+        public static T GetEntityAt<T>(int x, int y) where T : IEntity
+        {
+            return (T)EntityDatabase.Entities.Values.SingleOrDefault(a => a.Position.X == x && a.Position.Y == y);
         }
 
         public static bool EntityExistsAt(int x, int y)
@@ -63,9 +75,9 @@ namespace Emberpoint.Core.Objects
             return GetEntityAt<EmberEntity>(position) != null;
         }
 
-        private static class EmberEntityDatabase
+        private static class EntityDatabase
         {
-            public static readonly Dictionary<int, EmberEntity> Entities = new Dictionary<int, EmberEntity>();
+            public static readonly Dictionary<int, IEntity> Entities = new Dictionary<int, IEntity>();
 
             private static int _currentId;
             public static int GetUniqueId()
