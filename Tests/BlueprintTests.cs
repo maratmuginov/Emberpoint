@@ -11,7 +11,7 @@ namespace Tests
         protected override void Setup()
         {
             // Setup a grid based on a blueprint
-            _grid = new EmberGrid(new HouseBlueprint());
+            _grid = new EmberGrid(new GroundFloorBlueprint());
         }
 
         [Test]

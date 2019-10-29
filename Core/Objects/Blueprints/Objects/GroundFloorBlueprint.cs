@@ -2,6 +2,6 @@
 
 namespace Emberpoint.Core.Objects.Blueprints
 {
-    public class HouseBlueprint : Blueprint<EmberCell>
+    public class GroundFloorBlueprint : Blueprint<EmberCell>
     { }
 }

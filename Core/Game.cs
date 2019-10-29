@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Emberpoint.Core.Objects;
 using Emberpoint.Core.Objects.Blueprints;
 using Console = SadConsole.Console;
-using Emberpoint.Core.Extensions;
 
 namespace Emberpoint.Core
 {
@@ -39,7 +38,7 @@ namespace Emberpoint.Core
         private static void Init()
         {
             Map = new Console(Constants.Map.Width, Constants.Map.Height);
-            GridManager.InitializeBlueprint<HouseBlueprint>();
+            GridManager.InitializeBlueprint<GroundFloorBlueprint>();
             Grid.RenderObject(Map);
 
             SadConsole.Game.Instance.Window.Title = Constants.GameTitle;
