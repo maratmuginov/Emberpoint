@@ -10,6 +10,7 @@ namespace Emberpoint.Core.Objects
         public string Name { get; set; }
         public Color NormalForeground { get; set; }
         public Color ForegroundFov { get; set; }
+        public bool BlocksFov { get; set; }
 
         public EmberCell() 
         {
@@ -18,6 +19,7 @@ namespace Emberpoint.Core.Objects
             ForegroundFov = Color.Gray;
             Background = Color.Black;
             Walkable = true;
+            BlocksFov = false;
             Glyph = '.';
         }
 
@@ -30,6 +32,7 @@ namespace Emberpoint.Core.Objects
             ForegroundFov = fov;
             Background = Color.Black;
             Walkable = true;
+            BlocksFov = false;
         }
 
         public EmberCell(Point position, int glyph, Color foreground, Color fov, Color background)
@@ -41,6 +44,7 @@ namespace Emberpoint.Core.Objects
             ForegroundFov = fov;
             Background = background;
             Walkable = true;
+            BlocksFov = false;
         }
 
         public void CopyFrom(EmberCell cell)
@@ -54,6 +58,7 @@ namespace Emberpoint.Core.Objects
             NormalForeground = cell.NormalForeground;
             Position = cell.Position;
             Walkable = cell.Walkable;
+            BlocksFov = cell.BlocksFov;
         }
 
         public new EmberCell Clone()
@@ -65,7 +70,8 @@ namespace Emberpoint.Core.Objects
                 Name = this.Name,
                 NormalForeground = this.NormalForeground,
                 Position = this.Position,
-                Walkable = this.Walkable
+                Walkable = this.Walkable,
+                BlocksFov = this.BlocksFov
             };
             // Does foreground, background, glyph, mirror, decorators
             CopyAppearanceTo(cell);

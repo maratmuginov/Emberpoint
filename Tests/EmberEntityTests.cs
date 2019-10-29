@@ -76,7 +76,7 @@ namespace Tests
             Assert.IsFalse(entity.FieldOfView.BooleanFOV[6, 0]);
 
             var cell = _grid.GetCell(2, 0);
-            cell.Walkable = false;
+            cell.BlocksFov = true;
             _grid.SetCell(cell, true);
 
             Assert.IsFalse(entity.FieldOfView.BooleanFOV[3, 0]);

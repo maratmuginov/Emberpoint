@@ -31,7 +31,7 @@ namespace Emberpoint.Core.Objects
                 {
                     for (int y = 0; y < GridSizeY; y++)
                     {
-                        _fieldOfView[x, y] = GetCell(x, y).Walkable;
+                        _fieldOfView[x, y] = !GetCell(x, y).BlocksFov;
                     }
                 }
                 return _fieldOfView;
@@ -61,7 +61,7 @@ namespace Emberpoint.Core.Objects
             {
                 for (int y = 0; y < GridSizeY; y++)
                 {
-                    _fieldOfView[x, y] = GetCell(x, y).Walkable;
+                    _fieldOfView[x, y] = !GetCell(x, y).BlocksFov;
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace Emberpoint.Core.Objects
             var originalCell = Cells[cell.Position.Y * GridSizeX + cell.Position.X];
 
             // Update the map fov values if the walkable is changed
-            bool updateFieldOfView = originalCell.Walkable != cell.Walkable;
+            bool updateFieldOfView = originalCell.BlocksFov != cell.BlocksFov;
 
             // Copy the new cell data
             originalCell.CopyFrom(cell);
@@ -121,7 +121,7 @@ namespace Emberpoint.Core.Objects
         /// <param name="y"></param>
         private void UpdateFieldOfView(int x, int y)
         {
-            FieldOfView[x, y] = GetNonClonedCell(x, y).Walkable;
+            FieldOfView[x, y] = !GetNonClonedCell(x, y).BlocksFov;
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Emberpoint.Core.Objects
             {
                 for (int y = 0; y < GridSizeY; y++)
                 {
-                    FieldOfView[x, y] = GetNonClonedCell(x, y).Walkable;
+                    FieldOfView[x, y] = !GetNonClonedCell(x, y).BlocksFov;
                 }
             }
         }
