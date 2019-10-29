@@ -72,7 +72,8 @@ namespace Emberpoint.Core.Objects.Abstracts
                         NormalForeground = foregroundColor,
                         ForegroundFov = foregroundFovColor,
                         Walkable = tile.Walkable,
-                        Name = tile.Name
+                        Name = tile.Name,
+                        BlocksFov = tile.BlocksFov
                     });
                 }
             }
@@ -106,6 +107,7 @@ namespace Emberpoint.Core.Objects.Abstracts
             public bool Walkable;
             public string Foreground;
             public string ForegroundFov;
+            public bool BlocksFov;
 #pragma warning restore 0649
         }
     }
