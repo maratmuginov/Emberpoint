@@ -9,7 +9,9 @@ namespace Emberpoint.Core.Objects
     public class Player : EmberEntity
     {
         public Player() : base(Constants.Player.Foreground, Color.Transparent, Constants.Player.Character, 1, 1)
-        { }
+        {
+            FieldOfViewRadius = Constants.Player.FieldOfViewRadius;
+        }
 
         public void CheckForMovement()
         {

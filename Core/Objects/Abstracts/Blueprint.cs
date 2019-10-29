@@ -63,11 +63,14 @@ namespace Emberpoint.Core.Objects.Abstracts
                     if (!tiles.TryGetValue(charValue, out tile)) 
                         throw new Exception("Glyph '" + charValue + "' was not present in the config file for blueprint: " + name);
                     var foregroundColor = GetColorByString(tile.Foreground);
+                    var foregroundFovColor = GetColorByString(tile.ForegroundFov);
                     cells.Add(new T() 
                     { 
                         Glyph = tile.Glyph, 
                         Position = position, 
                         Foreground = foregroundColor, 
+                        NormalForeground = foregroundColor,
+                        ForegroundFov = foregroundFovColor,
                         Walkable = tile.Walkable,
                         Name = tile.Name
                     });
@@ -102,6 +105,7 @@ namespace Emberpoint.Core.Objects.Abstracts
             public string Name;
             public bool Walkable;
             public string Foreground;
+            public string ForegroundFov;
 #pragma warning restore 0649
         }
     }
