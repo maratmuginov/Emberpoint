@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Emberpoint.Core.Objects;
 using Emberpoint.Core.Objects.Blueprints;
 using Console = SadConsole.Console;
+using Emberpoint.Core.Windows;
 
 namespace Emberpoint.Core
 {
@@ -11,9 +12,11 @@ namespace Emberpoint.Core
         public static Console Map { get; private set; }
         public static EmberGrid Grid
         {
-            get { return GridManager.Grid; } 
+            get { return GridManager.Grid; }
         }
         public static Player Player { get; private set; }
+
+        public static DialogWindow DialogWindow;
 
         private static void Main()
         {
@@ -32,7 +35,17 @@ namespace Emberpoint.Core
 
         private static void Update(GameTime gameTime)
         {
-            Player.CheckForMovement();
+            if (DialogWindow.IsVisible)
+            {
+                if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Enter))
+                {
+                    DialogWindow.CloseDialog();
+                }
+            }
+            else
+            {
+                Player.CheckForMovement();
+            }
         }
 
         private static void Init()
@@ -45,15 +58,21 @@ namespace Emberpoint.Core
 
             var mainConsole = new Console(Constants.GameWindowWidth, Constants.GameWindowHeight);
             mainConsole.Children.Add(Map);
-            mainConsole.Print(Constants.GameWindowWidth / 2 - Constants.GameTitle.Length / 2, 2, Constants.GameTitle);
+            mainConsole.Print(Constants.GameWindowWidth / 2 - Constants.GameTitle.Length / 2, 1, Constants.GameTitle);
 
-            Map.Position = new Point(25, 5);
+            Map.Position = new Point(25, 3);
 
             // Instantiate player in the middle of the map
             Player = EntityManager.Create<Player>(new Point(Constants.Map.Width / 2, Constants.Map.Height / 2));
             Player.RenderObject(Map);
 
             Global.CurrentScreen = mainConsole;
+
+            DialogWindow = new DialogWindow(Constants.GameWindowWidth / 2, 6);
+            mainConsole.Children.Add(DialogWindow);
+
+            DialogWindow.ShowDialog("Game", new string[] { "Game locked until Dialog is accepted.", "Press 'Enter' to continue." });
+            DialogWindow.Position = new Point(2, Constants.GameWindowHeight - 7);
         }
     }
 }
