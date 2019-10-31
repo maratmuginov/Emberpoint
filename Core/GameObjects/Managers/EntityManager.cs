@@ -36,7 +36,7 @@ namespace Emberpoint.Core.GameObjects.Managers
             return EntityDatabase.GetUniqueId();
         }
 
-        public static void Remove(EmberEntity entity)
+        public static void Remove(IEntity entity)
         {
             EntityDatabase.Entities.Remove(entity.ObjectId);
         }
@@ -68,12 +68,12 @@ namespace Emberpoint.Core.GameObjects.Managers
 
         public static bool EntityExistsAt(int x, int y)
         {
-            return GetEntityAt<EmberEntity>(x, y) != null;
+            return GetEntityAt<IEntity>(x, y) != null;
         }
 
         public static bool EntityExistsAt(Point position)
         {
-            return GetEntityAt<EmberEntity>(position) != null;
+            return GetEntityAt<IEntity>(position) != null;
         }
 
         public static void RecalculatFieldOfView()

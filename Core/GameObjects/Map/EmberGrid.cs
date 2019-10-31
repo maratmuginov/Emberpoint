@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Console = SadConsole.Console;
 
-namespace Emberpoint.Core.GameObjects
+namespace Emberpoint.Core.GameObjects.Map
 {
     public class EmberGrid : IRenderable
     {
@@ -53,6 +53,8 @@ namespace Emberpoint.Core.GameObjects
                 return _map ?? (_map = UserInterfaceManager.Get<MapWindow>());
             }
         }
+
+        private Console _renderedConsole;
 
         public EmberGrid(Blueprint<EmberCell> blueprint)
         {
@@ -122,6 +124,7 @@ namespace Emberpoint.Core.GameObjects
 
         public void RenderObject(Console console)
         {
+            _renderedConsole = console;
             console.SetSurface(Cells, GridSizeX, GridSizeY);
         }
 
@@ -200,6 +203,15 @@ namespace Emberpoint.Core.GameObjects
         public bool InBounds(Point position)
         {
             return position.X >= 0 && position.Y >= 0 && position.X < GridSizeX && position.Y < GridSizeY;
+        }
+
+        public void UnRenderObject()
+        {
+            if (_renderedConsole != null)
+            {
+                _renderedConsole.Clear();
+                _renderedConsole = null;
+            }
         }
     }
 }

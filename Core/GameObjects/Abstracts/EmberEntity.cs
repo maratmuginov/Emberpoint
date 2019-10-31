@@ -21,6 +21,8 @@ namespace Emberpoint.Core.GameObjects.Abstracts
             }
         }
 
+        private Console _renderedConsole;
+
         /// <summary>
         /// Call this when the grid changes to a new grid object. (Like going into the basement etc)
         /// </summary>
@@ -62,6 +64,7 @@ namespace Emberpoint.Core.GameObjects.Abstracts
 
         public void RenderObject(Console console)
         {
+            _renderedConsole = console;
             console.Children.Add(this);
         }
 
@@ -69,6 +72,15 @@ namespace Emberpoint.Core.GameObjects.Abstracts
         {
             if (checkCanMove && !CanMoveTowards(position)) return;
             Position = position;
+        }
+
+        public void UnRenderObject()
+        {
+            if (_renderedConsole != null)
+            {
+                _renderedConsole.Children.Remove(this);
+                _renderedConsole = null;
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Emberpoint.Core.GameObjects;
-using Emberpoint.Core.GameObjects.Interfaces;
+﻿using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.GameObjects.Managers;
+using Emberpoint.Core.GameObjects.Map;
 using GoRogue;
 using Microsoft.Xna.Framework;
 using NUnit.Framework;
@@ -141,6 +141,11 @@ namespace Tests
             public void ResetFieldOfView()
             {
                 _fieldOfView = null;
+            }
+
+            public void UnRenderObject()
+            {
+                throw new NotImplementedException();
             }
         }
     }
