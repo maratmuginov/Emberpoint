@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Emberpoint.Core.GameObjects.Map;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

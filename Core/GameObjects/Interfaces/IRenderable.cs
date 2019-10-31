@@ -5,5 +5,6 @@ namespace Emberpoint.Core.GameObjects.Interfaces
     public interface IRenderable
     {
         void RenderObject(Console console);
+        void UnRenderObject();
     }
 }

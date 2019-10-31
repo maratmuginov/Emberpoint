@@ -1,5 +1,5 @@
 ﻿using Emberpoint.Core;
-using Emberpoint.Core.GameObjects;
+using Emberpoint.Core.GameObjects.Map;
 using Microsoft.Xna.Framework;
 using NUnit.Framework;
 

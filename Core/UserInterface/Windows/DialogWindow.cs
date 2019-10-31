@@ -49,6 +49,7 @@ namespace Emberpoint.Core.UserInterface.Windows
         public void Update()
         {
             // Tell's sadconsole to redraw this console
+            _textConsole.IsDirty = true;
             IsDirty = true;
         }
     }

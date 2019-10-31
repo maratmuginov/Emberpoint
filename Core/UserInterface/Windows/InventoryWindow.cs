@@ -1,5 +1,7 @@
 ﻿using Emberpoint.Core.Extensions;
+using Emberpoint.Core.GameObjects.Entities;
 using Emberpoint.Core.GameObjects.Interfaces;
+using Emberpoint.Core.GameObjects.Managers;
 using Microsoft.Xna.Framework;
 using SadConsole;
 using System.Collections.Generic;
@@ -7,21 +9,21 @@ using System.Linq;
 
 namespace Emberpoint.Core.UserInterface.Windows
 {
-    public class InventoryWindow : SadConsole.Console, IUserInterface
+    public class InventoryWindow : Console, IUserInterface
     {
-        private readonly SadConsole.Console _textConsole;
+        private readonly Console _textConsole;
 
         private int _maxLineRows;
-        private Dictionary<string, int> _inventoryDict;
+        private readonly Dictionary<IItem, int> _inventoryDict;
 
         public InventoryWindow(int width, int height) : base(width, height)
         {
             this.DrawBorders(width, height, "O", "|", "-", Color.Gray);
             Print(3, 0, "Inventory", Color.Purple);
 
-            _inventoryDict = new Dictionary<string, int>();
+            _inventoryDict = new Dictionary<IItem, int>();
             _maxLineRows = Height - 2;
-            _textConsole = new SadConsole.Console(Width - 2, Height - 2)
+            _textConsole = new Console(Width - 2, Height - 2)
             {
                 Position = new Point(2, 1),
             };
@@ -35,34 +37,41 @@ namespace Emberpoint.Core.UserInterface.Windows
         public void Initialize()
         {
             // Adding default Items to Inventory
-            AddInventoryItem("Potion of Sanity", 3);
-            AddInventoryItem("Potion of Health", 1);
-            RemoveInventoryItem("Potion of Sanity", 2);
+            var sanityPotion = new EmberItem("Potion of Sanity", 'S', Color.Green) { Amount = 3 };
+            AddInventoryItem(sanityPotion);
+            AddInventoryItem(new EmberItem("Potion of Health", 'H', Color.Red) { Amount = 1 });
+
+            sanityPotion.Amount = 2;
+            RemoveInventoryItem(sanityPotion);
         }
 
         public void Update()
         {
+            // Tell's sadconsole to redraw this console
+            _textConsole.IsDirty = true;
             IsDirty = true;
         }
 
-        public void AddInventoryItem(string name, int amount)
+        public void AddInventoryItem(IItem item)
         {
-            if (!_inventoryDict.ContainsKey(name))
+            if (!_inventoryDict.ContainsKey(item))
             {
-                _inventoryDict.Add(name, 0);
+                _inventoryDict.Add(item, item.Amount);
+                return;
             }
-            _inventoryDict[name] += amount;
+            _inventoryDict[item] += item.Amount;
             UpdateInventoryText();
         }
 
-        public void RemoveInventoryItem(string name, int amount)
+        public void RemoveInventoryItem(IItem item)
         {
-            if (_inventoryDict.ContainsKey(name))
+            if (_inventoryDict.ContainsKey(item))
             {
-                _inventoryDict[name] -= amount;
-                if (_inventoryDict[name] < 1)
+                _inventoryDict[item] -= item.Amount;
+                if (_inventoryDict[item] < 1)
                 {
-                    _inventoryDict.Remove(name);
+                    _inventoryDict.Remove(item);
+                    ItemManager.Remove(item);
                 }
             }
             UpdateInventoryText();
