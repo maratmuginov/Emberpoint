@@ -1,7 +1,9 @@
-﻿using Emberpoint.Core.GameObjects.Interfaces;
+﻿using Emberpoint.Core.Extensions;
+using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.GameObjects.Managers;
 using Microsoft.Xna.Framework;
 using SadConsole;
+using System.Linq;
 
 namespace Emberpoint.Core.UserInterface.Windows
 {
@@ -11,13 +13,15 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         public DialogWindow(int width, int height) : base(width, height)
         {
+            this.DrawBorders(width, height, "O", "|", "-", Color.Gray);
+
             _textConsole = new Console(Width - 2, Height - 2)
             {
                 Position = new Point(1, 1),
                 DefaultBackground = Color.Black
             };
 
-            Position = new Point(2, Constants.GameWindowHeight - 7);
+            Position = new Point(2, Constants.GameWindowHeight - 6);
 
             Children.Add(_textConsole);
             Global.CurrentScreen.Children.Add(this);
@@ -25,11 +29,11 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         public void ShowDialog(string dialogTitle, string[] dialogLines)
         {
-            Print(0, 0, dialogTitle, Color.Orange);
+            Print(3, 0, dialogTitle, Color.Orange);
             _textConsole.Cursor.Position = new Point(0, 0);
-            foreach (var line in dialogLines)
+            foreach (var line in dialogLines.Take(3))
             {
-                _textConsole.Cursor.Print(line);
+                _textConsole.Cursor.Print(" " + line);
                 _textConsole.Cursor.Print("\r\n");
             }
             IsVisible = true;
