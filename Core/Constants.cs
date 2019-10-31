@@ -9,7 +9,7 @@ namespace Emberpoint.Core
         public static string ApplicationRoot = GetApplicationRoot();
         public const string GameTitle = "Emberpoint";
         public const int GameWindowWidth = 120;
-        public const int GameWindowHeight = 40;
+        public const int GameWindowHeight = 41;
 
         public static class Map
         {

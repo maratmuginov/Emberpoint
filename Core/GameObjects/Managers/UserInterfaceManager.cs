@@ -29,7 +29,7 @@ namespace Emberpoint.Core.GameObjects.Managers
             inventory.Initialize();
 
             // Initialize dialog window
-            var dialogWindow = new DialogWindow(Constants.GameWindowWidth / 2, 5);
+            var dialogWindow = new DialogWindow(Constants.Map.Width, 6);
             Interfaces.Add(dialogWindow);
         }
 

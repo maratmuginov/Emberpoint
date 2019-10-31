@@ -21,7 +21,7 @@ namespace Emberpoint.Core.UserInterface.Windows
                 DefaultBackground = Color.Black
             };
 
-            Position = new Point(2, Constants.GameWindowHeight - 6);
+            Position = new Point(5, Constants.GameWindowHeight - 7);
 
             Children.Add(_textConsole);
             Global.CurrentScreen.Children.Add(this);
@@ -31,7 +31,7 @@ namespace Emberpoint.Core.UserInterface.Windows
         {
             Print(3, 0, dialogTitle, Color.Orange);
             _textConsole.Cursor.Position = new Point(0, 0);
-            foreach (var line in dialogLines.Take(3))
+            foreach (var line in dialogLines.Take(4))
             {
                 _textConsole.Cursor.Print(" " + line);
                 _textConsole.Cursor.Print("\r\n");
