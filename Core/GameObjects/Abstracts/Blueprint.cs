@@ -69,19 +69,25 @@ namespace Emberpoint.Core.GameObjects.Abstracts
                         Glyph = tile.Glyph,
                         Position = position,
                         Foreground = foregroundColor,
-                        NormalForeground = foregroundColor,
-                        ForegroundFov = Color.Lerp(foregroundColor, Color.Black, .5f),
-                        Walkable = tile.Walkable,
-                        Name = tile.Name,
-                        BlocksFov = tile.BlocksFov,
-                        EmitsLight = tile.EmitsLight,
-                        LightRadius = tile.LightRadius,
-                        Brightness = tile.Brightness
+                        CellProperties = new EmberCell.EmberCellProperties
+                        {
+                            NormalForeground = foregroundColor,
+                            ForegroundFov = Color.Lerp(foregroundColor, Color.Black, .5f),
+                            Walkable = tile.Walkable,
+                            Name = tile.Name,
+                            BlocksFov = tile.BlocksFov,
+                        },
+                        LightProperties = new EmberCell.LightEngineProperties
+                        {
+                            EmitsLight = tile.EmitsLight,
+                            LightRadius = tile.LightRadius,
+                            Brightness = tile.Brightness
+                        }
                     };
 
                     if (!string.IsNullOrWhiteSpace(tile.LightColor))
                     {
-                        cell.LightColor = GetColorByString(tile.LightColor);
+                        cell.LightProperties.LightColor = GetColorByString(tile.LightColor);
                     }
 
                     cells.Add(cell);

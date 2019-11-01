@@ -15,10 +15,10 @@ namespace Emberpoint.Core.GameObjects.Map
         {
             if (_isCalibrated) return;
             // Update light engine
-            foreach (var cell in cells.Where(a => a.EmitsLight))
+            foreach (var cell in cells.Where(a => a.LightProperties.EmitsLight))
             {
                 var oldCell = cell.Clone();
-                oldCell.EmitsLight = false;
+                oldCell.LightProperties.EmitsLight = false;
                 AdjustLightLevels(cell, oldCell);
                 GridManager.Grid.SetCell(cell);
             }
@@ -27,13 +27,13 @@ namespace Emberpoint.Core.GameObjects.Map
 
         public void AdjustLightLevels(EmberCell newCell, EmberCell oldCell)
         {
-            if (oldCell.EmitsLight == newCell.EmitsLight) return;
+            if (oldCell.LightProperties.EmitsLight == newCell.LightProperties.EmitsLight) return;
 
             var fov = new FOV(GridManager.Grid.FieldOfView);
 
-            if (!newCell.EmitsLight)
+            if (!newCell.LightProperties.EmitsLight)
             {
-                fov.Calculate(newCell.Position, oldCell.LightRadius);
+                fov.Calculate(newCell.Position, oldCell.LightProperties.LightRadius);
 
                 var toChangeCells = new List<EmberCell>();
                 for (int x = 0; x < GridManager.Grid.GridSizeX; x++)
@@ -45,7 +45,7 @@ namespace Emberpoint.Core.GameObjects.Map
                         {
                             var pos = new Point(x, y);
                             var cellToAdd = newCell.Position == pos ? newCell : GridManager.Grid.GetCell(x, y);
-                            cellToAdd.LightSources.Remove(newCell);
+                            cellToAdd.LightProperties.LightSources.Remove(newCell);
                             toChangeCells.Add(cellToAdd);
                         }
                     }
@@ -53,13 +53,13 @@ namespace Emberpoint.Core.GameObjects.Map
 
                 foreach (var cell in toChangeCells)
                 {
-                    if (cell.LightSources.Any()) continue;
-                    cell.LightSources = null;
-                    cell.Brightness = 0f;
-                    cell.LightRadius = 0;
-                    cell.LightColor = default;
+                    if (cell.LightProperties.LightSources.Any()) continue;
+                    cell.LightProperties.LightSources = null;
+                    cell.LightProperties.Brightness = 0f;
+                    cell.LightProperties.LightRadius = 0;
+                    cell.LightProperties.LightColor = default;
 
-                    GridManager.Grid.SetCellColors(cell, Game.Player, cell.NormalForeground, cell.ForegroundFov);
+                    GridManager.Grid.SetCellColors(cell, Game.Player, cell.CellProperties.NormalForeground, cell.CellProperties.ForegroundFov);
                     if (cell != newCell) // We don't need an infinite loop here :) It's passed by reference.
                         GridManager.Grid.SetCell(cell);
                 }
@@ -68,7 +68,7 @@ namespace Emberpoint.Core.GameObjects.Map
             }
 
             var cells = new List<(EmberCell, float)>();
-            fov.Calculate(newCell.Position, newCell.LightRadius);
+            fov.Calculate(newCell.Position, newCell.LightProperties.LightRadius);
 
             for (int x = 0; x < GridManager.Grid.GridSizeX; x++)
             {
@@ -80,11 +80,11 @@ namespace Emberpoint.Core.GameObjects.Map
                         var pos = new Point(x, y);
                         var distanceOfCenter = newCell.Position.SquaredDistance(pos);
                         var cellToAdd = newCell.Position == pos ? newCell : GridManager.Grid.GetCell(x, y);
-                        if (cellToAdd.LightSources == null)
+                        if (cellToAdd.LightProperties.LightSources == null)
                         {
-                            cellToAdd.LightSources = new List<EmberCell>();
+                            cellToAdd.LightProperties.LightSources = new List<EmberCell>();
                         }
-                        cellToAdd.LightSources.Add(newCell);
+                        cellToAdd.LightProperties.LightSources.Add(newCell);
                         cells.Add((cellToAdd, distanceOfCenter));
                     }
                 }
@@ -97,10 +97,10 @@ namespace Emberpoint.Core.GameObjects.Map
             foreach (var lightedCell in orderedCells)
             {
                 var brightness = brightnessLayers[lightedCell.Item2];
-                if (lightedCell.Item1.Brightness < brightness)
-                    lightedCell.Item1.Brightness = brightness;
+                if (lightedCell.Item1.LightProperties.Brightness < brightness)
+                    lightedCell.Item1.LightProperties.Brightness = brightness;
 
-                GridManager.Grid.SetCellColors(lightedCell.Item1, Game.Player, newCell.LightColor, Color.Lerp(newCell.LightColor, Color.Black, .5f));
+                GridManager.Grid.SetCellColors(lightedCell.Item1, Game.Player, newCell.LightProperties.LightColor, Color.Lerp(newCell.LightProperties.LightColor, Color.Black, .5f));
                 if (lightedCell.Item1 != newCell) // We don't need an infinite loop here :) It's passed by reference.
                     GridManager.Grid.SetCell(lightedCell.Item1);
             }
@@ -108,8 +108,8 @@ namespace Emberpoint.Core.GameObjects.Map
 
         private Dictionary<float, float> CalculateBrightnessLayers(EmberCell centerCell, List<float> layers)
         {
-            float deductAmount = centerCell.Brightness / layers.Count;
-            float maxBrightness = centerCell.Brightness + deductAmount;
+            float deductAmount = centerCell.LightProperties.Brightness / layers.Count;
+            float maxBrightness = centerCell.LightProperties.Brightness + deductAmount;
             return layers.ToDictionary(a => a, a => maxBrightness -= deductAmount);
         }
     }

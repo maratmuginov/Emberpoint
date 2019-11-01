@@ -45,7 +45,7 @@ namespace Tests
         {
             var entity = EntityManager.Create<TestEntity>(new Point(0, 0));
             var cell = _grid.GetCell(0, 1);
-            cell.Walkable = false;
+            cell.CellProperties.Walkable = false;
             _grid.SetCell(cell, true);
 
             Assert.IsFalse(entity.CanMoveTowards(new Point(0, 1)));
@@ -57,7 +57,7 @@ namespace Tests
         {
             var entity = EntityManager.Create<TestEntity>(new Point(0, 0));
             var cell = _grid.GetCell(0, 1);
-            cell.Walkable = false;
+            cell.CellProperties.Walkable = false;
             _grid.SetCell(cell, true);
 
             entity.MoveTowards(new Point(0, 1));
@@ -77,7 +77,7 @@ namespace Tests
             Assert.IsFalse(entity.FieldOfView.BooleanFOV[6, 0]);
 
             var cell = _grid.GetCell(2, 0);
-            cell.BlocksFov = true;
+            cell.CellProperties.BlocksFov = true;
             _grid.SetCell(cell, true);
 
             Assert.IsFalse(entity.FieldOfView.BooleanFOV[3, 0]);
@@ -122,7 +122,7 @@ namespace Tests
 
             public bool CanMoveTowards(Point position)
             {
-                return _grid.InBounds(position) && _grid.GetCell(position).Walkable && !EntityManager.EntityExistsAt(position);
+                return _grid.InBounds(position) && _grid.GetCell(position).CellProperties.Walkable && !EntityManager.EntityExistsAt(position);
             }
 
             public void MoveTowards(Point position, bool checkCanMove = true)

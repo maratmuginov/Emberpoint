@@ -24,9 +24,13 @@ namespace Tests
                         Background = Color.Black,
                         Foreground = Color.Gray,
                         Glyph = '.',
-                        Name = "floor",
+
+                        CellProperties = new EmberCell.EmberCellProperties
+                        {
+                            Name = "floor",
+                            Walkable = true
+                        },
                         Position = new Point(x, y),
-                        Walkable = true
                     };
                 }
             }
@@ -52,11 +56,11 @@ namespace Tests
         public void CanModifyCell()
         {
             var cell = _grid.GetCell(0, 0);
-            var prevValue = cell.Walkable;
-            cell.Walkable = !cell.Walkable;
+            var prevValue = cell.CellProperties.Walkable;
+            cell.CellProperties.Walkable = !cell.CellProperties.Walkable;
             _grid.SetCell(cell);
 
-            Assert.AreEqual(!prevValue, _grid.GetCell(0, 0).Walkable);
+            Assert.AreEqual(!prevValue, _grid.GetCell(0, 0).CellProperties.Walkable);
         }
 
         [Test]

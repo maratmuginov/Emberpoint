@@ -33,7 +33,7 @@ namespace Emberpoint.Core.GameObjects.Map
                 {
                     for (int y = 0; y < GridSizeY; y++)
                     {
-                        _fieldOfView[x, y] = !GetCell(x, y).BlocksFov;
+                        _fieldOfView[x, y] = !GetCell(x, y).CellProperties.BlocksFov;
                     }
                 }
                 return _fieldOfView;
@@ -83,7 +83,7 @@ namespace Emberpoint.Core.GameObjects.Map
             {
                 for (int y = 0; y < GridSizeY; y++)
                 {
-                    _fieldOfView[x, y] = !GetCell(x, y).BlocksFov;
+                    _fieldOfView[x, y] = !GetCell(x, y).CellProperties.BlocksFov;
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace Emberpoint.Core.GameObjects.Map
             var originalCell = Cells[cell.Position.Y * GridSizeX + cell.Position.X];
 
             // Update the map fov values if the walkable is changed
-            bool updateFieldOfView = originalCell.BlocksFov != cell.BlocksFov;
+            bool updateFieldOfView = originalCell.CellProperties.BlocksFov != cell.CellProperties.BlocksFov;
 
             // Adjust neighboring cell light levels if this object gives of light
             LightEngine.AdjustLightLevels(cell, originalCell);
@@ -155,7 +155,7 @@ namespace Emberpoint.Core.GameObjects.Map
         /// <param name="y"></param>
         private void UpdateFieldOfView(int x, int y)
         {
-            FieldOfView[x, y] = !GetNonClonedCell(x, y).BlocksFov;
+            FieldOfView[x, y] = !GetNonClonedCell(x, y).CellProperties.BlocksFov;
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Emberpoint.Core.GameObjects.Map
             {
                 for (int y = 0; y < GridSizeY; y++)
                 {
-                    FieldOfView[x, y] = !GetNonClonedCell(x, y).BlocksFov;
+                    FieldOfView[x, y] = !GetNonClonedCell(x, y).CellProperties.BlocksFov;
                 }
             }
         }
@@ -193,17 +193,17 @@ namespace Emberpoint.Core.GameObjects.Map
             // If the cell is in the field of view
             if (entity == null || entity.FieldOfView.BooleanFOV[cell.Position])
             {
-                if (cell.Brightness > 0f && cell.LightSources != null)
-                    cell.Foreground = Color.Lerp(cell.GetClosestLightSource().LightColor, Color.White, cell.Brightness);
+                if (cell.LightProperties.Brightness > 0f && cell.LightProperties.LightSources != null)
+                    cell.Foreground = Color.Lerp(cell.GetClosestLightSource().LightProperties.LightColor, Color.White, cell.LightProperties.Brightness);
                 else
-                    cell.Foreground = cell.NormalForeground;
+                    cell.Foreground = cell.CellProperties.NormalForeground;
             }
             else
             {
-                if (cell.Brightness > 0f && cell.LightSources != null)
-                    cell.Foreground = Color.Lerp(Color.Lerp(cell.GetClosestLightSource().LightColor, Color.Black, .5f), Color.White, cell.Brightness);
+                if (cell.LightProperties.Brightness > 0f && cell.LightProperties.LightSources != null)
+                    cell.Foreground = Color.Lerp(Color.Lerp(cell.GetClosestLightSource().LightProperties.LightColor, Color.Black, .5f), Color.White, cell.LightProperties.Brightness);
                 else
-                    cell.Foreground = cell.ForegroundFov;
+                    cell.Foreground = cell.CellProperties.ForegroundFov;
             }
         }
 
@@ -212,17 +212,17 @@ namespace Emberpoint.Core.GameObjects.Map
             // If the cell is in the field of view
             if (entity == null || entity.FieldOfView.BooleanFOV[cell.Position])
             {
-                if (cell.Brightness > 0f)
-                    cell.Foreground = Color.Lerp(foreground, Color.White, cell.Brightness);
+                if (cell.LightProperties.Brightness > 0f)
+                    cell.Foreground = Color.Lerp(foreground, Color.White, cell.LightProperties.Brightness);
                 else
-                    cell.Foreground = cell.NormalForeground;
+                    cell.Foreground = cell.CellProperties.NormalForeground;
             }
             else
             {
-                if (cell.Brightness > 0f)
-                    cell.Foreground = Color.Lerp(foregroundFov, Color.White, cell.Brightness);
+                if (cell.LightProperties.Brightness > 0f)
+                    cell.Foreground = Color.Lerp(foregroundFov, Color.White, cell.LightProperties.Brightness);
                 else
-                    cell.Foreground = cell.ForegroundFov;
+                    cell.Foreground = cell.CellProperties.ForegroundFov;
             }
         }
 

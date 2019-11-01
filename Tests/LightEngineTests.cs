@@ -26,11 +26,11 @@ namespace Tests
             var cell = SetLightCell(10, 10, 4);
 
             var area = new List<EmberCell>();
-            GetRadiusNeighbors(cell, cell.LightRadius, area);
+            GetRadiusNeighbors(cell, cell.LightProperties.LightRadius, area);
             var points = area.ToDictionary(a => a.Position, a => a);
 
             var fov = new FOV(_grid.FieldOfView);
-            fov.Calculate(cell.Position, cell.LightRadius);
+            fov.Calculate(cell.Position, cell.LightProperties.LightRadius);
 
             for (int x=0; x < _grid.GridSizeX; x++)
             {
@@ -39,7 +39,7 @@ namespace Tests
                     if (fov.BooleanFOV[x,y])
                     {
                         Assert.IsTrue(points.TryGetValue(new Point(x, y), out EmberCell value));
-                        Assert.IsTrue(value.Brightness > 0f);
+                        Assert.IsTrue(value.LightProperties.Brightness > 0f);
                     }
                 }
             }
@@ -65,7 +65,7 @@ namespace Tests
                     if (fov.BooleanFOV[x, y])
                     {
                         Assert.IsTrue(points.TryGetValue(new Point(x, y), out EmberCell value));
-                        Assert.IsTrue(value.Brightness == 0f);
+                        Assert.IsTrue(value.LightProperties.Brightness == 0f);
                     }
                 }
             }
@@ -79,11 +79,11 @@ namespace Tests
             foreach (var cell in cells)
             {
                 var area = new List<EmberCell>();
-                GetRadiusNeighbors(cell, cell.LightRadius, area);
+                GetRadiusNeighbors(cell, cell.LightProperties.LightRadius, area);
                 var points = area.ToDictionary(a => a.Position, a => a);
 
                 var fov = new FOV(_grid.FieldOfView);
-                fov.Calculate(cell.Position, cell.LightRadius);
+                fov.Calculate(cell.Position, cell.LightProperties.LightRadius);
 
                 for (int x = 0; x < _grid.GridSizeX; x++)
                 {
@@ -92,7 +92,7 @@ namespace Tests
                         if (fov.BooleanFOV[x, y])
                         {
                             Assert.IsTrue(points.TryGetValue(new Point(x, y), out EmberCell value));
-                            Assert.IsTrue(value.Brightness > 0f);
+                            Assert.IsTrue(value.LightProperties.Brightness > 0f);
                         }
                     }
                 }
@@ -122,7 +122,7 @@ namespace Tests
                         if (fov.BooleanFOV[x, y])
                         {
                             Assert.IsTrue(points.TryGetValue(new Point(x, y), out EmberCell value));
-                            Assert.IsTrue(value.Brightness == 0f);
+                            Assert.IsTrue(value.LightProperties.Brightness == 0f);
                         }
                     }
                 }
@@ -138,11 +138,11 @@ namespace Tests
             foreach (var cell in setCells.Except(unsetCells))
             {
                 var area = new List<EmberCell>();
-                GetRadiusNeighbors(cell, cell.LightRadius, area);
+                GetRadiusNeighbors(cell, cell.LightProperties.LightRadius, area);
                 var points = area.ToDictionary(a => a.Position, a => a);
 
                 var fov = new FOV(_grid.FieldOfView);
-                fov.Calculate(cell.Position, cell.LightRadius);
+                fov.Calculate(cell.Position, cell.LightProperties.LightRadius);
 
                 for (int x = 0; x < _grid.GridSizeX; x++)
                 {
@@ -151,7 +151,7 @@ namespace Tests
                         if (fov.BooleanFOV[x, y])
                         {
                             Assert.IsTrue(points.TryGetValue(new Point(x, y), out EmberCell value));
-                            Assert.IsTrue(value.Brightness > 0f);
+                            Assert.IsTrue(value.LightProperties.Brightness > 0f);
                         }
                     }
                 }
@@ -159,11 +159,11 @@ namespace Tests
 
             // Check unset cell for light sources = null has 0 brightness
             var area2 = new List<EmberCell>();
-            GetRadiusNeighbors(unsetCells[0], unsetCells[0].LightRadius, area2);
+            GetRadiusNeighbors(unsetCells[0], unsetCells[0].LightProperties.LightRadius, area2);
             var points2 = area2.ToDictionary(a => a.Position, a => a);
 
             var fov2 = new FOV(_grid.FieldOfView);
-            fov2.Calculate(unsetCells[0].Position, unsetCells[0].LightRadius);
+            fov2.Calculate(unsetCells[0].Position, unsetCells[0].LightProperties.LightRadius);
 
             bool someCellsAreUnset = false;
             for (int x = 0; x < _grid.GridSizeX; x++)
@@ -173,10 +173,10 @@ namespace Tests
                     if (fov2.BooleanFOV[x, y])
                     {
                         Assert.IsTrue(points2.TryGetValue(new Point(x, y), out EmberCell value));
-                        if (value.LightSources == null)
+                        if (value.LightProperties.LightSources == null)
                         {
                             someCellsAreUnset = true;
-                            Assert.IsTrue(value.Brightness == 0f);
+                            Assert.IsTrue(value.LightProperties.Brightness == 0f);
                         }
                     }
                 }
@@ -187,7 +187,7 @@ namespace Tests
         private EmberCell UnsetLightCell(int x, int y)
         {
             var cell = _grid.GetCell(x, y);
-            cell.EmitsLight = false;
+            cell.LightProperties.EmitsLight = false;
             _grid.SetCell(cell);
             return cell;
         }
@@ -195,10 +195,10 @@ namespace Tests
         private EmberCell SetLightCell(int x, int y, int radius)
         {
             var cell = _grid.GetCell(x, y);
-            cell.EmitsLight = true;
-            cell.LightRadius = radius;
-            cell.LightColor = Color.Red;
-            cell.Brightness = 0.75f;
+            cell.LightProperties.EmitsLight = true;
+            cell.LightProperties.LightRadius = radius;
+            cell.LightProperties.LightColor = Color.Red;
+            cell.LightProperties.Brightness = 0.75f;
             _grid.SetCell(cell);
             return cell;
         }

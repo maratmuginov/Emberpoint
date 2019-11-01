@@ -1,9 +1,9 @@
-﻿namespace Emberpoint.Core.GameObjects.Interfaces
+﻿using static Emberpoint.Core.GameObjects.Map.EmberCell;
+
+namespace Emberpoint.Core.GameObjects.Interfaces
 {
     public interface ILightable
     {
-        float Brightness { get; set; }
-        int LightRadius { get; set; }
-        bool EmitsLight { get; set; }
+        LightEngineProperties LightProperties { get; set; }
     }
 }

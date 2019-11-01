@@ -59,7 +59,7 @@ namespace Emberpoint.Core.GameObjects.Abstracts
 
         public bool CanMoveTowards(Point position)
         {
-            return GridManager.Grid.InBounds(position) && GridManager.Grid.GetCell(position).Walkable && !EntityManager.EntityExistsAt(position);
+            return GridManager.Grid.InBounds(position) && GridManager.Grid.GetCell(position).CellProperties.Walkable && !EntityManager.EntityExistsAt(position);
         }
 
         public void RenderObject(Console console)
