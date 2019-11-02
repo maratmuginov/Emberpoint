@@ -38,7 +38,8 @@ namespace Emberpoint.Core
 
             if (UserInterfaceManager.IsPaused) return;
 
-            Player.CheckForMovement();
+            Player.CheckForMovementKeys();
+            Player.CheckForInteractionKeys();
         }
 
         private static void Init()
@@ -50,11 +51,11 @@ namespace Emberpoint.Core
             DialogWindow = UserInterfaceManager.Get<DialogWindow>();
 
             // Instantiate player in the middle of the map
-            Player = EntityManager.Create<Player>(new Point(Constants.Map.Width / 2, Constants.Map.Height / 2));
-            Player.RenderObject(UserInterfaceManager.Get<MapWindow>());
+            Player = EntityManager.Create<Player>(GridManager.Grid.GetFirstCell(a => a.LightProperties.Brightness > 0f && a.CellProperties.Walkable).Position);
+            Player.Initialize();
 
             // Show a tutorial dialog window.
-            DialogWindow.ShowDialog("Tutorial", new string[] { "Welcome to Emberpoint.", "Press 'Enter' to continue." });
+            DialogWindow.ShowDialog("Tutorial", new string[] { "Welcome to Emberpoint.", "To turn on your flashlight, press 'F'.", "Press 'Enter' to continue." });
         }
     }
 }

@@ -44,16 +44,15 @@ namespace Emberpoint.Core.GameObjects.Abstracts
 
         private void OnMove(object sender, EntityMovedEventArgs args)
         {
-            if (FieldOfViewRadius > 0)
-            {
-                // Re-calculate the field of view
-                FieldOfView.Calculate(Position, FieldOfViewRadius);
+            if (this is IItem) return;
 
-                // Only update visual for player entity
-                if (this is Player)
-                {
-                    GridManager.Grid.DrawFieldOfView(this);
-                }
+            // Re-calculate the field of view
+            FieldOfView.Calculate(Position, FieldOfViewRadius);
+
+            // Only update visual for player entity
+            if (this is Player)
+            {
+                GridManager.Grid.DrawFieldOfView(this);
             }
         }
 

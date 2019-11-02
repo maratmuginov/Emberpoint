@@ -1,6 +1,8 @@
 ﻿using Emberpoint.Core.Extensions;
 using Emberpoint.Core.GameObjects.Abstracts;
+using Emberpoint.Core.GameObjects.Entities.Items;
 using Emberpoint.Core.GameObjects.Managers;
+using Emberpoint.Core.UserInterface.Windows;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SadConsole;
@@ -9,15 +11,37 @@ namespace Emberpoint.Core.GameObjects.Entities
 {
     public class Player : EmberEntity
     {
+        public InventoryWindow Inventory { get; private set; }
+
         public Player() : base(Constants.Player.Foreground, Color.Transparent, Constants.Player.Character, 1, 1)
         {
-            FieldOfViewRadius = Constants.Player.FieldOfViewRadius;
-
-            // After player is created, we calibrate the light engine
-            GridManager.Grid.CalibrateLightEngine();
+            FieldOfViewRadius = 0; // TODO: needs to be 0 but map should stay dark
         }
 
-        public void CheckForMovement()
+        public void Initialize()
+        {
+            // Initialize inventory
+            Inventory = new InventoryWindow(Constants.GameWindowWidth / 3, 15);
+            UserInterfaceManager.Add(Inventory);
+            Inventory.Initialize();
+
+            // Draw player on the map
+            RenderObject(UserInterfaceManager.Get<MapWindow>());
+        }
+
+        public void CheckForInteractionKeys()
+        {
+            if (Global.KeyboardState.IsKeyPressed(Constants.Keybindings.FlashlightKey))
+            {
+                var flashLight = Game.Player.Inventory.GetItemOfType<Flashlight>();
+                if (flashLight != null)
+                {
+                    flashLight.Switch();
+                }
+            }
+        }
+
+        public void CheckForMovementKeys()
         {
             if (Global.KeyboardState.IsKeyPressed(Keys.Z) || Global.KeyboardState.IsKeyPressed(Keys.Up)) 
             {

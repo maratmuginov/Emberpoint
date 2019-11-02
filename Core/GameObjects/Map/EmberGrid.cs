@@ -96,6 +96,35 @@ namespace Emberpoint.Core.GameObjects.Map
             LightEngine.Calibrate(Cells);
         }
 
+        public EmberCell GetFirstCell(Func<EmberCell, bool> criteria)
+        {
+            for (int x=0; x < GridSizeX; x++)
+            {
+                for (int y = 0; y < GridSizeY; y++)
+                {
+                    if (criteria.Invoke(GetNonClonedCell(x,y)))
+                    {
+                        return GetCell(x, y);
+                    }
+                }
+            }
+            return null;
+        }
+
+        public IEnumerable<EmberCell> GetCells(Func<EmberCell, bool> criteria)
+        {
+            for (int x = 0; x < GridSizeX; x++)
+            {
+                for (int y = 0; y < GridSizeY; y++)
+                {
+                    if (criteria.Invoke(GetNonClonedCell(x, y)))
+                    {
+                        yield return GetCell(x, y);
+                    }
+                }
+            }
+        }
+
         public EmberCell GetCell(Point position)
         {
             return Cells[position.Y * GridSizeX + position.X].Clone();
@@ -191,7 +220,7 @@ namespace Emberpoint.Core.GameObjects.Map
         public void SetCellColors(EmberCell cell, IEntity entity)
         {
             // If the cell is in the field of view
-            if (entity == null || entity.FieldOfView.BooleanFOV[cell.Position])
+            if (entity == null || (entity.FieldOfViewRadius > 0 && entity.FieldOfView.BooleanFOV[cell.Position]))
             {
                 if (cell.LightProperties.Brightness > 0f && cell.LightProperties.LightSources != null)
                     cell.Foreground = Color.Lerp(cell.GetClosestLightSource().LightProperties.LightColor, Color.White, cell.LightProperties.Brightness);
@@ -210,7 +239,7 @@ namespace Emberpoint.Core.GameObjects.Map
         public void SetCellColors(EmberCell cell, IEntity entity, Color foreground, Color foregroundFov)
         {
             // If the cell is in the field of view
-            if (entity == null || entity.FieldOfView.BooleanFOV[cell.Position])
+            if (entity == null || (entity.FieldOfViewRadius > 0 && entity.FieldOfView.BooleanFOV[cell.Position]))
             {
                 if (cell.LightProperties.Brightness > 0f)
                     cell.Foreground = Color.Lerp(foreground, Color.White, cell.LightProperties.Brightness);

@@ -4,25 +4,30 @@ using Microsoft.Xna.Framework;
 using SadConsole;
 using SadConsole.Entities;
 
-namespace Emberpoint.Core.GameObjects.Entities
+namespace Emberpoint.Core.GameObjects.Abstracts
 {
     /// <summary>
     /// An item is also a renderable entity.
     /// </summary>
-    public class EmberItem : Entity, IItem
+    public abstract class EmberItem : Entity, IItem
     {
         public int ObjectId { get; }
         public int Amount { get; set; }
-        public new string Name { get; }
+        public new string Name { get; set; }
+        public int Glyph { get { return Animation.CurrentFrame[0].Glyph; } set { Animation.CurrentFrame[0].Glyph = value; } }
+        public Color GlyphColor { get { return Animation.CurrentFrame[0].Foreground; } set { Animation.CurrentFrame[0].Foreground = value; } }
+
+        public virtual string DisplayName { get { return string.Format(" {0} : {1} \r\n", Name, Amount); } }
 
         private Console _renderedConsole;
 
-        public EmberItem(string name, int glyph, Color foregroundColor, int width = 1, int height = 1) : base(width, height)
+        public EmberItem(int glyph, Color foregroundColor, int width = 1, int height = 1) : base(width, height)
         {
             ObjectId = ItemManager.GetUniqueId();
             ItemManager.Add(this);
 
-            Name = name;
+            Amount = 1;
+            Name = GetType().Name;
             Animation.CurrentFrame[0].Foreground = foregroundColor;
             Animation.CurrentFrame[0].Background = Color.Transparent;
             Animation.CurrentFrame[0].Glyph = glyph;
@@ -70,6 +75,14 @@ namespace Emberpoint.Core.GameObjects.Entities
         public int CompareTo(IItem other)
         {
             return string.Compare(Name, other.Name);
+        }
+
+        /// <summary>
+        /// Called when the object is picked up from the grid and placed in the inventory.
+        /// </summary>
+        public virtual void PickUp()
+        {
+            Game.Player.Inventory.AddInventoryItem(this);
         }
     }
 }

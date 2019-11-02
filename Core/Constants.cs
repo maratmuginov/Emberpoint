@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.IO;
 
@@ -22,6 +23,16 @@ namespace Emberpoint.Core
             public const char Character = '@';
             public static Color Foreground = Color.White;
             public const int FieldOfViewRadius = 4;
+        }
+        
+        public static class Keybindings
+        {
+            public static Keys FlashlightKey = Keys.F;
+        }
+
+        public static class Items
+        {
+            public const int BatteryMaxPower = 60;
         }
 
         public static class Blueprint
