@@ -23,14 +23,14 @@ namespace Emberpoint.Core.GameObjects.Managers
             Interfaces.Add(map);
             map.Initialize();
 
-            // Initializing Inventory window
-            var inventory = new InventoryWindow(Constants.GameWindowWidth / 3, 15);
-            Interfaces.Add(inventory);
-            inventory.Initialize();
-
             // Initialize dialog window
             var dialogWindow = new DialogWindow(Constants.Map.Width, 6);
             Interfaces.Add(dialogWindow);
+        }
+
+        public static void Add<T>(T userInterface) where T : IUserInterface
+        {
+            Interfaces.Add(userInterface);
         }
 
         public static T Get<T>() where T : IUserInterface

@@ -37,13 +37,11 @@ namespace Emberpoint.Core.UserInterface.Windows
                 _textConsole.Cursor.Print("\r\n");
             }
             IsVisible = true;
-            UserInterfaceManager.IsPaused = true;
         }
 
         public void CloseDialog()
         {
             IsVisible = false;
-            UserInterfaceManager.IsPaused = false;
         }
 
         public void Update()

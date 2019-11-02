@@ -1,5 +1,5 @@
 ﻿using Emberpoint.Core.Extensions;
-using Emberpoint.Core.GameObjects.Entities;
+using Emberpoint.Core.GameObjects.Entities.Items;
 using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.GameObjects.Managers;
 using Microsoft.Xna.Framework;
@@ -14,14 +14,14 @@ namespace Emberpoint.Core.UserInterface.Windows
         private readonly Console _textConsole;
 
         private int _maxLineRows;
-        private readonly Dictionary<IItem, int> _inventoryDict;
+        private readonly List<IItem> _inventory;
 
         public InventoryWindow(int width, int height) : base(width, height)
         {
             this.DrawBorders(width, height, "O", "|", "-", Color.Gray);
-            Print(3, 0, "Inventory", Color.Purple);
+            Print(3, 0, "Inventory", Color.Orange);
 
-            _inventoryDict = new Dictionary<IItem, int>();
+            _inventory = new List<IItem>();
             _maxLineRows = Height - 2;
             _textConsole = new Console(Width - 2, Height - 2)
             {
@@ -37,12 +37,16 @@ namespace Emberpoint.Core.UserInterface.Windows
         public void Initialize()
         {
             // Adding default Items to Inventory
-            var sanityPotion = new EmberItem("Potion of Sanity", 'S', Color.Green) { Amount = 3 };
-            AddInventoryItem(sanityPotion);
-            AddInventoryItem(new EmberItem("Potion of Health", 'H', Color.Red) { Amount = 1 });
+            var items = new IItem[]
+            {
+                new Flashlight(),
+                new Battery() { Amount = 2 }
+            };
 
-            sanityPotion.Amount = 2;
-            RemoveInventoryItem(sanityPotion);
+            foreach (var item in items)
+            {
+                item.PickUp();
+            }
         }
 
         public void Update()
@@ -54,49 +58,92 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         public void AddInventoryItem(IItem item)
         {
-            if (!_inventoryDict.ContainsKey(item))
+            if (!_inventory.Contains(item))
             {
-                _inventoryDict.Add(item, item.Amount);
-                return;
+                _inventory.Add(item);
             }
-            _inventoryDict[item] += item.Amount;
+            else
+            {
+                var invItem = _inventory.Single(a => a.Equals(item));
+                if (invItem.Amount != item.Amount)
+                    invItem.Amount += item.Amount;
+            }
             UpdateInventoryText();
         }
 
         public void RemoveInventoryItem(IItem item)
         {
-            if (_inventoryDict.ContainsKey(item))
+            if (_inventory.Contains(item))
             {
-                _inventoryDict[item] -= item.Amount;
-                if (_inventoryDict[item] < 1)
+                var invItem = _inventory.Single(a => a.Equals(item));
+                invItem.Amount -= item.Amount;
+                if (invItem.Amount < 1)
                 {
-                    _inventoryDict.Remove(item);
-                    ItemManager.Remove(item);
+                    _inventory.Remove(invItem);
+                    ItemManager.Remove(invItem);
                 }
+                UpdateInventoryText();
             }
-            UpdateInventoryText();
         }
 
-        private void UpdateInventoryText()
+        public void RemoveInventoryItem<T>(int amount) where T : IItem
+        {
+            var item = GetItemOfType<T>();
+            if (item != null)
+            {
+                if (_inventory.Contains(item))
+                {
+                    var invItem = _inventory.Single(a => a.Equals(item));
+                    invItem.Amount -= amount;
+                    if (invItem.Amount < 1)
+                    {
+                        _inventory.Remove(invItem);
+                        ItemManager.Remove(invItem);
+                    }
+                    UpdateInventoryText();
+                }
+            }
+        }
+
+        public T GetItemOfType<T>() where T : IItem
+        {
+            return _inventory.OfType<T>().FirstOrDefault();
+        }
+
+        public IEnumerable<T> GetItemsOfType<T>() where T : IItem
+        {
+            return _inventory.OfType<T>();
+        }
+
+        public bool HasItemOfType<T>() where T : IItem
+        {
+            return _inventory.OfType<T>().Any();
+        }
+
+        public void UpdateInventoryText()
         {
             _textConsole.Clear();
             _textConsole.Cursor.Position = new Point(0, 0);
 
-            if (_inventoryDict.Count > _maxLineRows)
+            if (_inventory.Count > _maxLineRows)
             {
-                foreach (var item in _inventoryDict.OrderBy(x => x.Key).Take(_maxLineRows - 1))
+                foreach (var item in _inventory.OrderBy(x => x).Take(_maxLineRows - 1))
                 {
-                    _textConsole.Cursor.Print(string.Format("{0} : {1}\r\n", item.Value, item.Key));
+                    _textConsole.Cursor.Print(new ColoredString("[" + (char)item.Glyph + "]", item.GlyphColor, Color.Transparent));
+                    _textConsole.Cursor.Print(item.DisplayName);
                 }
                 _textConsole.Cursor.Print("<More Items..>");
             }
             else
             {
-                foreach (var item in _inventoryDict.OrderBy(x => x.Key))
+                foreach (var item in _inventory.OrderBy(x => x))
                 {
-                    _textConsole.Cursor.Print(string.Format("{0} : {1}\r\n", item.Value, item.Key));
+                    _textConsole.Cursor.Print(new ColoredString("[" + (char)item.Glyph + "]", item.GlyphColor, Color.Transparent));
+                    _textConsole.Cursor.Print(item.DisplayName);
                 }
             }
+
+            Update();
         }
     }
 }
