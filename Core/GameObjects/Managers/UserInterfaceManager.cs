@@ -26,6 +26,10 @@ namespace Emberpoint.Core.GameObjects.Managers
             // Initialize dialog window
             var dialogWindow = new DialogWindow(Constants.Map.Width, 6);
             Interfaces.Add(dialogWindow);
+
+            // Initialize game over window
+            var gameOverWindow = new GameOverWindow(Constants.GameWindowWidth, Constants.GameWindowHeight);
+            Interfaces.Add(gameOverWindow);
         }
 
         public static void Add<T>(T userInterface) where T : IUserInterface
