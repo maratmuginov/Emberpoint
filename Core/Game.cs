@@ -46,7 +46,7 @@ namespace Emberpoint.Core
 
         private static void Init()
         {
-            UserInterfaceManager.ShowMainMenu();
+            MainMenuWindow.Show();
         }
     }
 }

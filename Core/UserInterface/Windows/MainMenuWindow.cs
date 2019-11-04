@@ -118,9 +118,51 @@ namespace Emberpoint.Core.UserInterface.Windows
             Add(exitButton);
         }
 
+        public static void Show()
+        {
+            var mainMenu = UserInterfaceManager.Get<MainMenuWindow>();
+            if (mainMenu == null)
+            {
+                mainMenu = new MainMenuWindow(Constants.GameWindowWidth, Constants.GameWindowHeight);
+                mainMenu.InitializeButtons();
+                UserInterfaceManager.Add(mainMenu);
+            }
+            else
+            {
+                mainMenu.IsVisible = true;
+                mainMenu.IsFocused = true;
+                mainMenu.IsCursorDisabled = false;
+            }
+
+            Global.CurrentScreen = mainMenu;
+
+            foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>())
+            {
+                if (inf.Equals(mainMenu)) continue;
+                UserInterfaceManager.Remove(inf);
+            }
+        }
+
+        public static void Hide(SadConsole.Console transitionConsole)
+        {
+            var mainMenu = UserInterfaceManager.Get<MainMenuWindow>();
+            if (mainMenu == null)
+            {
+                return;
+            }
+            else
+            {
+                mainMenu.IsVisible = false;
+                mainMenu.IsFocused = false;
+                mainMenu.IsCursorDisabled = true;
+            }
+
+            Global.CurrentScreen = transitionConsole;
+        }
+
         private void Transition(SadConsole.Console transitionConsole)
         {
-            UserInterfaceManager.HideMainMenu(transitionConsole);
+            Hide(transitionConsole);
         }
 
         public void ButtonPressPlay(object sender, EventArgs args)

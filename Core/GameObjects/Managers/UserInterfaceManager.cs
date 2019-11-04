@@ -13,48 +13,6 @@ namespace Emberpoint.Core.GameObjects.Managers
         public static bool IsPaused { get; set; }
         public static bool IsInitialized { get; private set; }
 
-        public static void ShowMainMenu()
-        {
-            var mainMenu = Interfaces.OfType<MainMenuWindow>().SingleOrDefault();
-            if (mainMenu == null)
-            {
-                mainMenu = new MainMenuWindow(Constants.GameWindowWidth, Constants.GameWindowHeight);
-                mainMenu.InitializeButtons();
-                Add(mainMenu);
-            }
-            else
-            {
-                mainMenu.IsVisible = true;
-                mainMenu.IsFocused = true;
-                mainMenu.IsCursorDisabled = false;
-            }
-
-            Global.CurrentScreen = mainMenu;
-
-            foreach (var inf in Interfaces)
-            {
-                if (inf.Equals(mainMenu)) continue;
-                Interfaces.Remove(inf);
-            }
-        }
-
-        public static void HideMainMenu(Console transitionConsole)
-        {
-            var mainMenu = Interfaces.OfType<MainMenuWindow>().SingleOrDefault();
-            if (mainMenu == null)
-            {
-                return;
-            }
-            else
-            {
-                mainMenu.IsVisible = false;
-                mainMenu.IsFocused = false;
-                mainMenu.IsCursorDisabled = true;
-            }
-
-            Global.CurrentScreen = transitionConsole;
-        }
-
         public static void Initialize()
         {
             // Initialize game window, set's the Global.CurrentScreen
@@ -85,7 +43,17 @@ namespace Emberpoint.Core.GameObjects.Managers
 
         public static T Get<T>() where T : IUserInterface
         {
-            return Interfaces.OfType<T>().Single();
-        }    
+            return Interfaces.OfType<T>().SingleOrDefault();
+        }
+
+        public static void Remove<T>(T userInterface) where T : IUserInterface
+        {
+            Interfaces.Remove(userInterface);
+        }
+
+        public static IEnumerable<T> GetAll<T>()
+        {
+            return Interfaces.OfType<T>();
+        }
     }
 }
