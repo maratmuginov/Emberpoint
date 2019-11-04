@@ -46,6 +46,10 @@ namespace Emberpoint.Core
 
         private static void Init()
         {
+            // Makes buttons look better
+            Settings.UseDefaultExtendedFont = true;
+
+            // Shows the main menu
             MainMenuWindow.Show();
         }
     }
