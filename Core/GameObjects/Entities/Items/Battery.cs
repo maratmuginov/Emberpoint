@@ -31,10 +31,10 @@ namespace Emberpoint.Core.GameObjects.Entities.Items
                     Game.Player.Inventory.RemoveInventoryItem<Battery>(1);
                     Power = Constants.Items.BatteryMaxPower;
 
-                    UserInterfaceManager.Get<DialogWindow>().ShowDialog("Battery depleted.", new[] { "A battery has been depleted!" });
+                    UserInterfaceManager.Get<DialogWindow>().ShowDialog("Battery depleted.", new[] { "A battery has been depleted!", "Press enter to hide this message." });
                     return true;
                 }
-                UserInterfaceManager.Get<DialogWindow>().ShowDialog("Battery depleted.", new[] { "You ran out of batteries!" });
+                UserInterfaceManager.Get<DialogWindow>().ShowDialog("Battery depleted.", new[] { "You ran out of batteries!", "Press enter to hide this message." });
                 return false;
             }
             return true;

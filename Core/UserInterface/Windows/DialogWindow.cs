@@ -35,6 +35,7 @@ namespace Emberpoint.Core.UserInterface.Windows
         public void ShowDialog(string dialogTitle, string[] dialogLines)
         {
             Print(3, 0, dialogTitle, Color.Orange);
+            _textConsole.Clear();
             _textConsole.Cursor.Position = new Point(0, 0);
             foreach (var line in dialogLines.Take(4))
             {
