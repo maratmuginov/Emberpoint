@@ -19,6 +19,9 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         public MainMenuWindow(int width, int height) : base(width, height)
         {
+            // Set the XNA container's title
+            SadConsole.Game.Instance.Window.Title = Constants.GameTitle;
+
             // Set custom theme
             var consoleTheme = SadConsole.Themes.Library.Default.Clone();
             consoleTheme.Colors.ControlHostBack = Color.Black;

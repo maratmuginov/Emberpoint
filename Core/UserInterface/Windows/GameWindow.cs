@@ -1,5 +1,4 @@
 ﻿using Emberpoint.Core.GameObjects.Interfaces;
-using Microsoft.Xna.Framework;
 using SadConsole;
 
 namespace Emberpoint.Core.UserInterface.Windows
