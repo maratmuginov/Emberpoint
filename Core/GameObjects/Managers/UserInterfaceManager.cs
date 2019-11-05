@@ -10,7 +10,7 @@ namespace Emberpoint.Core.GameObjects.Managers
         private static readonly List<IUserInterface> Interfaces = new List<IUserInterface>();
 
         public static bool IsPaused { get; set; }
-        public static bool IsInitialized { get; private set; }
+        public static bool IsInitialized { get; set; }
 
         public static void Initialize()
         {

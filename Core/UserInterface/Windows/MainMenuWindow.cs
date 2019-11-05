@@ -169,15 +169,12 @@ namespace Emberpoint.Core.UserInterface.Windows
             // Remove mainmenu and transition
             Transition(UserInterfaceManager.Get<GameWindow>().Console);
 
-            // Keep the dialog window in a global variable so we can check it in the game loop
-            Game.DialogWindow = UserInterfaceManager.Get<DialogWindow>();
-            
             // Instantiate player in the middle of the map
             Game.Player = EntityManager.Create<Player>(GridManager.Grid.GetFirstCell(a => a.LightProperties.Brightness > 0f && a.CellProperties.Walkable).Position);
             Game.Player.Initialize();
 
             // Show a tutorial dialog window.
-            Game.DialogWindow.ShowDialog("Tutorial", new string[] { "Welcome to Emberpoint.", "To turn on your flashlight, press 'F'.", "Press 'Enter' to continue." });
+            UserInterfaceManager.Get<DialogWindow>().ShowDialog("Tutorial", new string[] { "Welcome to Emberpoint.", "To turn on your flashlight, press 'F'.", "Press 'Enter' to continue." });
         }
 
         public void ButtonPressContributors(object sender, EventArgs args)

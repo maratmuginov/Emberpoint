@@ -11,7 +11,6 @@ namespace Emberpoint.Core
     public static class Game
     {
         public static Player Player { get; set; }
-        public static DialogWindow DialogWindow { get; set; }
 
         private static void Main()
         {
@@ -32,12 +31,9 @@ namespace Emberpoint.Core
         {
             if (!UserInterfaceManager.IsInitialized) return;
 
-            if (DialogWindow.IsVisible)
+            if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Enter))
             {
-                if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Enter))
-                {
-                    DialogWindow.CloseDialog();
-                }
+                UserInterfaceManager.Get<DialogWindow>().CloseDialog();
             }
 
             if (UserInterfaceManager.IsPaused) return;
@@ -50,16 +46,18 @@ namespace Emberpoint.Core
             {
                 UserInterfaceManager.Get<GameOverWindow>().Show();
             }
-
         }
 
         public static void Reset()
         {
+            UserInterfaceManager.IsInitialized = false;
             foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>())
             {
                 if (inf.Equals(UserInterfaceManager.Get<MainMenuWindow>())) continue;
                 UserInterfaceManager.Remove(inf);
             }
+
+            Player = null;
             EntityManager.Clear();
             ItemManager.Clear();
         }
