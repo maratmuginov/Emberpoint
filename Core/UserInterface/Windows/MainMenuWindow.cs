@@ -136,7 +136,7 @@ namespace Emberpoint.Core.UserInterface.Windows
 
             Global.CurrentScreen = mainMenu;
 
-            foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>())
+            foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>().ToArray())
             {
                 if (inf.Equals(mainMenu)) continue;
                 UserInterfaceManager.Remove(inf);

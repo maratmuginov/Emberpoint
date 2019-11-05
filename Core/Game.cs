@@ -12,7 +12,6 @@ namespace Emberpoint.Core
         public static Player Player { get; set; }
         public static DialogWindow DialogWindow { get; set; }
         public static GameOverWindow GameOverWindow { get; set; }
-        public static MainMenuWindow MainMenuWindow { get; set; }
 
         private static void Main()
         {

@@ -28,6 +28,10 @@ namespace Emberpoint.Core.GameObjects.Managers
             var dialogWindow = new DialogWindow(Constants.Map.Width, 6);
             Add(dialogWindow);
 
+            // Initialize game over window
+            var gameOverWindow = new GameOverWindow(Constants.GameWindowWidth, Constants.GameWindowHeight);
+            Add(gameOverWindow);
+
             // Initialize inventory
             var inventory = new InventoryWindow(Constants.GameWindowWidth / 3, 15);
             Add(inventory);

@@ -105,7 +105,7 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         private void ButtonPressToMainMenu(object sender, EventArgs e)
         {
-            UserInterfaceManager.ShowMainMenu();
+            MainMenuWindow.Show();
         }
 
         private void DrawGameOverTitle()
