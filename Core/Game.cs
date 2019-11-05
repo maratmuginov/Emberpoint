@@ -12,7 +12,6 @@ namespace Emberpoint.Core
     {
         public static Player Player { get; set; }
         public static DialogWindow DialogWindow { get; set; }
-        public static GameOverWindow GameOverWindow { get; set; }
 
         private static void Main()
         {
@@ -49,14 +48,14 @@ namespace Emberpoint.Core
             //Test trigger for game over state
             if (Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.P))
             {
-                GameOverWindow.ShowGameOverWindow();
+                UserInterfaceManager.Get<GameOverWindow>().Show();
             }
 
         }
 
         public static void Reset()
         {
-            foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>().ToArray())
+            foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>())
             {
                 if (inf.Equals(UserInterfaceManager.Get<MainMenuWindow>())) continue;
                 UserInterfaceManager.Remove(inf);

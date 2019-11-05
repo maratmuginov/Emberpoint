@@ -30,7 +30,6 @@ namespace Emberpoint.Core.GameObjects.Managers
             // Initialize game over window
             var gameOverWindow = new GameOverWindow(Constants.GameWindowWidth, Constants.GameWindowHeight);
             Add(gameOverWindow);
-            gameOverWindow.Initialize();
 
             // Initialize inventory
             var inventory = new InventoryWindow(Constants.GameWindowWidth / 3, 15);
@@ -57,7 +56,7 @@ namespace Emberpoint.Core.GameObjects.Managers
 
         public static IEnumerable<T> GetAll<T>()
         {
-            return Interfaces.OfType<T>();
+            return Interfaces.OfType<T>().ToArray();
         }
     }
 }

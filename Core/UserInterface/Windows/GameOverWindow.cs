@@ -54,7 +54,7 @@ namespace Emberpoint.Core.UserInterface.Windows
             IsDirty = true;
         }
 
-        public void ShowGameOverWindow()
+        public void Show()
         {
             foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>())
             {
@@ -68,12 +68,7 @@ namespace Emberpoint.Core.UserInterface.Windows
                 inf.IsVisible = false;
             }
         }
-
-        public void Initialize()
-        {
-            Game.GameOverWindow = UserInterfaceManager.Get<GameOverWindow>();
-        }
-
+       
         private void InitializeButtons()
         {
             var returnToMainMenuButton = new Button(26, 3)

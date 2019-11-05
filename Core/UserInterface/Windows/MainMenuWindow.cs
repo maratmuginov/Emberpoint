@@ -133,6 +133,7 @@ namespace Emberpoint.Core.UserInterface.Windows
                 mainMenu.IsFocused = true;
                 mainMenu.IsCursorDisabled = false;
             }
+            Global.CurrentScreen = mainMenu;
             
             Game.Reset();
         }
