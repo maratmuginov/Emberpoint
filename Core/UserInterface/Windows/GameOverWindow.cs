@@ -73,6 +73,8 @@ namespace Emberpoint.Core.UserInterface.Windows
             _inventoryWindow.IsVisible = false;
 
             IsVisible = true;
+
+            EntityManager.Clear();
         }
 
         private void InitializeButtons()
