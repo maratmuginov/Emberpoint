@@ -31,7 +31,7 @@ namespace Emberpoint.Core.GameObjects.Managers
 
             Global.CurrentScreen = mainMenu;
 
-            foreach (var inf in Interfaces)
+            foreach (var inf in Interfaces.ToArray())
             {
                 if (inf.Equals(mainMenu)) continue;
                 Interfaces.Remove(inf);
@@ -69,6 +69,11 @@ namespace Emberpoint.Core.GameObjects.Managers
             // Initialize dialog window
             var dialogWindow = new DialogWindow(Constants.Map.Width, 6);
             Add(dialogWindow);
+
+            //Initialize game over window
+            var gameOverWindow = new GameOverWindow(Constants.GameWindowWidth, Constants.GameWindowHeight);
+            Add(gameOverWindow);
+
 
             // Initialize inventory
             var inventory = new InventoryWindow(Constants.GameWindowWidth / 3, 15);

@@ -1,46 +1,61 @@
-﻿
-using System.Collections.Generic;
-using System.Text;
-using Emberpoint.Core.Extensions;
+﻿using System;
 using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.GameObjects.Managers;
+using Emberpoint.Core.SadConsoleHelpers;
 using Microsoft.Xna.Framework;
 using SadConsole;
+using SadConsole.Controls;
+using SadConsole.Themes;
+using Console = SadConsole.Console;
 
 namespace Emberpoint.Core.UserInterface.Windows
 {
-    public class GameOverWindow : Console, IUserInterface
+    public class GameOverWindow : ControlsConsole, IUserInterface
     {
         private static MapWindow _mapWindow;
         private static DialogWindow _dialogWindow;
         private static InventoryWindow _inventoryWindow;
 
-        private readonly Console _gameOverConsole;
-        private readonly Console _textConsole;
-
         public GameOverWindow(int width, int height) : base(width, height)
         {
-            _textConsole = new Console(Width - 2, Height - 2)
+            var consoleTheme = Library.Default.Clone();
+            consoleTheme.Colors.ControlHostBack = Color.Black;
+            consoleTheme.Colors.Text = Color.White;
+            consoleTheme.ButtonTheme = new ButtonLinesThemeFixed
             {
-                Position = new Point(20, 20),
-                DefaultBackground = Color.Black
+                Colors = new Colors
+                {
+                    ControlBack = Color.Black,
+                    Text = Color.Yellow,
+                    TextDark = Color.Orange,
+                    TextBright = Color.LightYellow,
+                    TextFocused = Color.Yellow,
+                    TextLight = Color.LightYellow,
+                    TextSelected = Color.Yellow,
+                    TextSelectedDark = Color.Orange,
+                    TitleText = Color.Purple
+                }
             };
+            consoleTheme.ButtonTheme.Colors.RebuildAppearances();
+            consoleTheme.Colors.RebuildAppearances();
 
-            _gameOverConsole = new Console(Width - 2, Height - 2)
-            {
-                Position = new Point(23, 16),
-                DefaultBackground = Color.Black
-            };
+            // Set the new theme
+            Theme = consoleTheme;
 
-           
-            Children.Add(_gameOverConsole);
-            _gameOverConsole.Children.Add(_textConsole);
             IsVisible = false;
 
             Global.CurrentScreen.Children.Add(this);
 
             DrawGameOverTitle();
-            DrawText();
+            InitializeButtons();
+        }
+
+
+        public Console Console => this;
+
+        public void Update()
+        {
+            IsDirty = true;
         }
 
         public void ShowGameOverWindow()
@@ -56,42 +71,65 @@ namespace Emberpoint.Core.UserInterface.Windows
             _mapWindow.IsVisible = false;
             _dialogWindow.IsVisible = false;
             _inventoryWindow.IsVisible = false;
-            this.IsVisible = true;
+
+            IsVisible = true;
         }
 
-        public void Update()
+        private void InitializeButtons()
         {
-            IsDirty = true;
+            var returnToMainMenuButton = new Button(26, 3)
+            {
+                Text = "Return to main menu",
+                Position = new Point(Constants.GameWindowWidth / 2 - 13, Constants.GameWindowHeight / 2 + 4),
+                UseMouse = true,
+                UseKeyboard = false
+            };
+            returnToMainMenuButton.Click += ButtonPressToMainMenu;
+            Add(returnToMainMenuButton);
+
+            var exitGameButton = new Button(26, 3)
+            {
+                Text = "Exit game",
+                Position = new Point(Constants.GameWindowWidth / 2 - 13, Constants.GameWindowHeight / 2 + 8),
+                UseMouse = true,
+                UseKeyboard = false
+            };
+            exitGameButton.Click += ButtonPressExitGame;
+            Add(exitGameButton);
         }
 
-        private void DrawText()
+        private void ButtonPressExitGame(object sender, EventArgs e)
         {
-            _textConsole.Cursor.Print("Press 'Enter' to return to main menu" + System.Environment.NewLine);
-            _textConsole.Cursor.Print("Press 'Esc' to exit the application");
+            Environment.Exit(0);
+        }
+
+        private void ButtonPressToMainMenu(object sender, EventArgs e)
+        {
+            UserInterfaceManager.ShowMainMenu();
         }
 
         private void DrawGameOverTitle()
         {
-            _gameOverConsole.Cursor.Print(@" _______  _______  _______  _______    _______           _______  _______ " + System.Environment.NewLine);
-            _gameOverConsole.Cursor.Print(@"(  ____ \(  ___  )(       )(  ____ \  (  ___  )|\     /|(  ____ \(  ____ )" + System.Environment.NewLine);
-            _gameOverConsole.Cursor.Print(@"| (    \/| (   ) || () () || (    \/  | (   ) || )   ( || (    \/| (    )|" + System.Environment.NewLine);
-            _gameOverConsole.Cursor.Print(@"| |      | (___) || || || || (__      | |   | || |   | || (__    | (____)|" + System.Environment.NewLine);
-            _gameOverConsole.Cursor.Print(@"| | ____ |  ___  || |(_)| ||  __)     | |   | |( (   ) )|  __)   |     __)" + System.Environment.NewLine);
-            _gameOverConsole.Cursor.Print(@"| | \_  )| (   ) || |   | || (        | |   | | \ \_/ / | (      | (\ (   " + System.Environment.NewLine);
-            _gameOverConsole.Cursor.Print(@"| (___) || )   ( || )   ( || (____/\  | (___) |  \   /  | (____/\| ) \ \__" + System.Environment.NewLine);
-            _gameOverConsole.Cursor.Print(@"(_______)|/     \||/     \|(_______/  (_______)   \_/   (_______/|/   \__/" + System.Environment.NewLine);
+            var titleFragments = @"
+ _______  _______  _______  _______    _______           _______  _______ 
+(  ____ \(  ___  )(       )(  ____ \  (  ___  )|\     /|(  ____ \(  ____ )
+| (    \/| (   ) || () () || (    \/  | (   ) || )   ( || (    \/| (    )|
+| |      | (___) || || || || (__      | |   | || |   | || (__    | (____)|
+| | ____ |  ___  || |(_)| ||  __)     | |   | |( (   ) )|  __)   |     __)
+| | \_  )| (   ) || |   | || (        | |   | | \ \_/ / | (      | (\ (   
+| (___) || )   ( || )   ( || (____/\  | (___) |  \   /  | (____/\| ) \ \__
+(_______)|/     \||/     \|(_______/  (_______)   \_/   (_______/|/   \__/                        
+"
+                .Replace("\r", string.Empty).Split('\n');
+
+            var startPosX = Constants.GameWindowWidth / 2 - 37;
+            var startPosY = 10;
+
+            // Print title fragments
+            for (var y = 0; y < titleFragments.Length; y++)
+            for (var x = 0; x < titleFragments[y].Length; x++)
+                Print(startPosX + x, startPosY + y,
+                    new ColoredGlyph(titleFragments[y][x], Color.White, Color.Transparent));
         }
     }
 }
-
-// Game over title source
-// _______  _______  _______  _______    _______           _______  _______ 
-//(  ____ \(  ___  )(       )(  ____ \  (  ___  )|\     /|(  ____ \(  ____ )
-//| (    \/| (   ) || () () || (    \/  | (   ) || )   ( || (    \/| (    )|
-//| |      | (___) || || || || (__      | |   | || |   | || (__    | (____)|
-//| | ____ |  ___  || |(_)| ||  __)     | |   | |( (   ) )|  __)   |     __)
-//| | \_  )| (   ) || |   | || (        | |   | | \ \_/ / | (      | (\ (   
-//| (___) || )   ( || )   ( || (____/\  | (___) |  \   /  | (____/\| ) \ \__
-//(_______)|/     \||/     \|(_______/  (_______)   \_/   (_______/|/   \__/ 
-                                                                          
-

@@ -1,4 +1,5 @@
-﻿using SadConsole;
+﻿using System;
+using SadConsole;
 using Microsoft.Xna.Framework;
 using Emberpoint.Core.GameObjects.Entities;
 using Emberpoint.Core.UserInterface.Windows;
@@ -10,6 +11,8 @@ namespace Emberpoint.Core
     {
         public static Player Player { get; set; }
         public static DialogWindow DialogWindow { get; set; }
+        public static GameOverWindow GameOverWindow { get; set; }
+        public static MainMenuWindow MainMenuWindow { get; set; }
 
         private static void Main()
         {
@@ -42,6 +45,13 @@ namespace Emberpoint.Core
 
             Player.CheckForMovementKeys();
             Player.CheckForInteractionKeys();
+
+            //Test trigger for game over state
+            if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.P))
+            {
+                GameOverWindow.ShowGameOverWindow();
+            }
+
         }
 
         private static void Init()
