@@ -189,7 +189,7 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         public void ButtonPressExit(object sender, EventArgs args)
         {
-            // TODO
+            Environment.Exit(0);
         }
 
         public void Update()
