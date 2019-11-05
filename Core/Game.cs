@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using SadConsole;
+﻿using SadConsole;
 using Microsoft.Xna.Framework;
 using Emberpoint.Core.GameObjects.Entities;
 using Emberpoint.Core.GameObjects.Interfaces;
