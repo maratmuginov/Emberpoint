@@ -133,14 +133,8 @@ namespace Emberpoint.Core.UserInterface.Windows
                 mainMenu.IsFocused = true;
                 mainMenu.IsCursorDisabled = false;
             }
-
-            Global.CurrentScreen = mainMenu;
-
-            foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>().ToArray())
-            {
-                if (inf.Equals(mainMenu)) continue;
-                UserInterfaceManager.Remove(inf);
-            }
+            
+            Game.Reset();
         }
 
         public static void Hide(SadConsole.Console transitionConsole)
@@ -160,6 +154,7 @@ namespace Emberpoint.Core.UserInterface.Windows
             Global.CurrentScreen = transitionConsole;
         }
 
+
         private void Transition(SadConsole.Console transitionConsole)
         {
             Hide(transitionConsole);
@@ -175,9 +170,7 @@ namespace Emberpoint.Core.UserInterface.Windows
 
             // Keep the dialog window in a global variable so we can check it in the game loop
             Game.DialogWindow = UserInterfaceManager.Get<DialogWindow>();
-
-            Game.GameOverWindow = UserInterfaceManager.Get<GameOverWindow>();
-
+            
             // Instantiate player in the middle of the map
             Game.Player = EntityManager.Create<Player>(GridManager.Grid.GetFirstCell(a => a.LightProperties.Brightness > 0f && a.CellProperties.Walkable).Position);
             Game.Player.Initialize();

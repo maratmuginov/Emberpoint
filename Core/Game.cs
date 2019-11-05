@@ -1,7 +1,8 @@
-﻿using System;
+﻿using System.Linq;
 using SadConsole;
 using Microsoft.Xna.Framework;
 using Emberpoint.Core.GameObjects.Entities;
+using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.UserInterface.Windows;
 using Emberpoint.Core.GameObjects.Managers;
 
@@ -46,11 +47,22 @@ namespace Emberpoint.Core
             Player.CheckForInteractionKeys();
 
             //Test trigger for game over state
-            if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.P))
+            if (Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.P))
             {
                 GameOverWindow.ShowGameOverWindow();
             }
 
+        }
+
+        public static void Reset()
+        {
+            foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>().ToArray())
+            {
+                if (inf.Equals(UserInterfaceManager.Get<MainMenuWindow>())) continue;
+                UserInterfaceManager.Remove(inf);
+            }
+            EntityManager.Clear();
+            ItemManager.Clear();
         }
 
         private static void Init()

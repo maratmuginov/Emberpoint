@@ -1,6 +1,5 @@
 ﻿using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.UserInterface.Windows;
-using SadConsole;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,6 +30,7 @@ namespace Emberpoint.Core.GameObjects.Managers
             // Initialize game over window
             var gameOverWindow = new GameOverWindow(Constants.GameWindowWidth, Constants.GameWindowHeight);
             Add(gameOverWindow);
+            gameOverWindow.Initialize();
 
             // Initialize inventory
             var inventory = new InventoryWindow(Constants.GameWindowWidth / 3, 15);

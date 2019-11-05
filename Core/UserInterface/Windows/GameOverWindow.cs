@@ -12,10 +12,6 @@ namespace Emberpoint.Core.UserInterface.Windows
 {
     public class GameOverWindow : ControlsConsole, IUserInterface
     {
-        private static MapWindow _mapWindow;
-        private static DialogWindow _dialogWindow;
-        private static InventoryWindow _inventoryWindow;
-
         public GameOverWindow(int width, int height) : base(width, height)
         {
             var consoleTheme = Library.Default.Clone();
@@ -60,21 +56,22 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         public void ShowGameOverWindow()
         {
-            // Get reference on Map window
-            _mapWindow = UserInterfaceManager.Get<MapWindow>();
-            // Get reference on Dialog window
-            _dialogWindow = UserInterfaceManager.Get<DialogWindow>();
-            // Get reference on Inventory window
-            _inventoryWindow = UserInterfaceManager.Get<InventoryWindow>();
+            foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>())
+            {
+                if (inf.Equals(UserInterfaceManager.Get<GameOverWindow>()) ||
+                    inf.Equals(UserInterfaceManager.Get<GameWindow>()))
+                {
+                    inf.IsVisible = true;
+                    continue;
+                }
 
-            // Show only Game Over window
-            _mapWindow.IsVisible = false;
-            _dialogWindow.IsVisible = false;
-            _inventoryWindow.IsVisible = false;
+                inf.IsVisible = false;
+            }
+        }
 
-            IsVisible = true;
-
-            EntityManager.Clear();
+        public void Initialize()
+        {
+            Game.GameOverWindow = UserInterfaceManager.Get<GameOverWindow>();
         }
 
         private void InitializeButtons()
