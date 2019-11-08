@@ -1,11 +1,12 @@
-﻿using Emberpoint.Core.Extensions;
+﻿using System;
+using Emberpoint.Core.Extensions;
 using Emberpoint.Core.GameObjects.Abstracts;
 using Emberpoint.Core.GameObjects.Entities.Items;
 using Emberpoint.Core.GameObjects.Managers;
 using Emberpoint.Core.UserInterface.Windows;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using SadConsole;
+using SadConsole.Components;
 
 namespace Emberpoint.Core.GameObjects.Entities
 {
@@ -20,15 +21,41 @@ namespace Emberpoint.Core.GameObjects.Entities
             }
         }
 
-        public Player() : base(Constants.Player.Foreground, Color.Transparent, Constants.Player.Character, 1, 1)
+        private MapWindow _mapWindow;
+        public MapWindow MapWindow
+        {
+            get
+            {
+                return _mapWindow ?? (_mapWindow = UserInterfaceManager.Get<MapWindow>());
+            }
+        }
+
+        public Player() : base(Constants.Player.Foreground, Color.Black, Constants.Player.Character, 1, 1)
         {
             FieldOfViewRadius = 0; // TODO: needs to be 0 but map should stay dark
+   
+            Components.Add(new EntityViewSyncComponent());
+        }
+
+        public override void Update(TimeSpan timeElapsed)
+        {
+            // Check movement keys for the player
+            CheckForMovementKeys();
+
+            // Check any interaction keys for the player
+            CheckForInteractionKeys();
+
+            // Call base to update correctly
+            base.Update(timeElapsed);
         }
 
         public void Initialize()
         {
             // Draw player on the map
-            RenderObject(UserInterfaceManager.Get<MapWindow>());
+            RenderObject(MapWindow);
+
+            // Center viewport on player
+            MapWindow.CenterOnEntity(this);
         }
 
         public void CheckForInteractionKeys()
