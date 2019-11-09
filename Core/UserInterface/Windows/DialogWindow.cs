@@ -2,13 +2,16 @@
 using Emberpoint.Core.GameObjects.Interfaces;
 using Microsoft.Xna.Framework;
 using SadConsole;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Emberpoint.Core.UserInterface.Windows
 {
+
     public class DialogWindow : Console, IUserInterface
     {
         private readonly Console _textConsole;
+        private readonly Queue<Dialog> _queuedDialogs;
 
         public Console Console
         {
@@ -19,6 +22,7 @@ namespace Emberpoint.Core.UserInterface.Windows
         {
             this.DrawBorders(width, height, "O", "|", "-", Color.Gray);
 
+            _queuedDialogs = new Queue<Dialog>();
             _textConsole = new Console(Width - 2, Height - 2)
             {
                 Position = new Point(1, 1),
@@ -31,23 +35,34 @@ namespace Emberpoint.Core.UserInterface.Windows
             Global.CurrentScreen.Children.Add(this);
         }
 
-        public void ShowDialog(string dialogTitle, string[] dialogLines)
+        public void AddDialog(string dialogTitle, string[] dialogLines)
         {
-            Print(3, 0, dialogTitle, Color.Orange);
+            var dialog = new Dialog(dialogTitle, dialogLines);
+            _queuedDialogs.Enqueue(dialog);
+        }
+
+        /// <summary>
+        /// Show's all queued dialogs.
+        /// </summary>
+        public void ShowNext()
+        {
+            if (_queuedDialogs.Count == 0) 
+            {
+                IsVisible = false;
+                return;
+            }
+
+            var dialog = _queuedDialogs.Dequeue();
+
+            Print(3, 0, dialog.Title, Color.Orange);
             _textConsole.Clear();
             _textConsole.Cursor.Position = new Point(0, 0);
-            foreach (var line in dialogLines.Take(4))
+            foreach (var line in dialog.Content.Take(4))
             {
                 _textConsole.Cursor.Print(" " + line);
                 _textConsole.Cursor.Print("\r\n");
             }
-            Update();
             IsVisible = true;
-        }
-
-        public void CloseDialog()
-        {
-            IsVisible = false;
         }
 
         public void Update()
@@ -55,6 +70,18 @@ namespace Emberpoint.Core.UserInterface.Windows
             // Tell's sadconsole to redraw this console
             _textConsole.IsDirty = true;
             IsDirty = true;
+        }
+
+        private class Dialog
+        {
+            public string Title;
+            public string[] Content;
+
+            public Dialog(string title, string[] content)
+            {
+                Title = title;
+                Content = content;
+            }
         }
     }
 }

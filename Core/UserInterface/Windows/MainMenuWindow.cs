@@ -177,12 +177,21 @@ namespace Emberpoint.Core.UserInterface.Windows
             Game.Player.Initialize();
 
             // Show a tutorial dialog window.
-            UserInterfaceManager.Get<DialogWindow>().ShowDialog("Tutorial", new[]
+            var dialogWindow = UserInterfaceManager.Get<DialogWindow>();
+            dialogWindow.AddDialog("Game introduction", new[]
             {
                 "Welcome to Emberpoint.",
-                "To turn on your flashlight, press '" + KeybindingsManager.GetKeybinding(Keybindings.Flashlight) + "'.",
+                "This is a small introduction to the game.",
                 "Press 'Enter' to continue."
             });
+            dialogWindow.AddDialog("Flashlight introduction", new[]
+{
+                "The flashlight can be used to discover new tiles.",
+                "Turn on your flashlight and discover 30 new tiles.",
+                "Press '" + KeybindingsManager.GetKeybinding(Keybindings.Flashlight) + "' to turn on your flashlight.",
+                "Press 'Enter' to exit dialog."
+            });
+            dialogWindow.ShowNext();
         }
 
         public void ButtonPressContributors(object sender, EventArgs args)

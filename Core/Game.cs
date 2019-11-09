@@ -42,7 +42,7 @@ namespace Emberpoint.Core
 
             if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Enter))
             {
-                UserInterfaceManager.Get<DialogWindow>().CloseDialog();
+                UserInterfaceManager.Get<DialogWindow>().ShowNext();
             }
         }
 
