@@ -65,13 +65,6 @@ namespace Emberpoint.Core.UserInterface.Windows
             IsVisible = true;
         }
 
-        public void Update()
-        {
-            // Tell's sadconsole to redraw this console
-            _textConsole.IsDirty = true;
-            IsDirty = true;
-        }
-
         private class Dialog
         {
             public string Title;

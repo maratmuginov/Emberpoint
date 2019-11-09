@@ -45,14 +45,7 @@ namespace Emberpoint.Core.UserInterface.Windows
             InitializeButtons();
         }
 
-
         public Console Console => this;
-
-        public void Update()
-        {
-            IsDirty = true;
-        }
-
         public void Show()
         {
             foreach (var inf in UserInterfaceManager.GetAll<IUserInterface>())

@@ -219,10 +219,5 @@ namespace Emberpoint.Core.UserInterface.Windows
         {
             Environment.Exit(0);
         }
-
-        public void Update()
-        {
-            IsDirty = true;
-        }
     }
 }

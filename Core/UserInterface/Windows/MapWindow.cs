@@ -35,9 +35,11 @@ namespace Emberpoint.Core.UserInterface.Windows
             this.CenterViewPortOnPoint(entity.Position);
         }
 
+        /// <summary>
+        /// Call this method when you change the cell colors on the cell objects.
+        /// </summary>
         public void Update()
         {
-            // Tell's sadconsole to redraw this console
             IsDirty = true;
         }
     }

@@ -154,10 +154,5 @@ namespace Emberpoint.Core.UserInterface.Windows
             WaitingForAnyKeyPress = false;
             UseMouse = true;
         }
-
-        public void Update()
-        {
-            IsDirty = true;
-        }
     }
 }

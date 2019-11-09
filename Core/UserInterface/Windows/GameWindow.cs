@@ -21,11 +21,5 @@ namespace Emberpoint.Core.UserInterface.Windows
         {
             get { return this; }
         }
-
-        public void Update()
-        {
-            // Tell's sadconsole to redraw this console
-            IsDirty = true;
-        }
     }
 }

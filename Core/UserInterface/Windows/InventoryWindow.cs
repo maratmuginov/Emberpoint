@@ -54,13 +54,6 @@ namespace Emberpoint.Core.UserInterface.Windows
             }
         }
 
-        public void Update()
-        {
-            // Tell's sadconsole to redraw this console
-            _textConsole.IsDirty = true;
-            IsDirty = true;
-        }
-
         public void AddInventoryItem(IItem item)
         {
             if (!_inventory.Contains(item))
@@ -147,8 +140,6 @@ namespace Emberpoint.Core.UserInterface.Windows
                     _textConsole.Cursor.Print(item.DisplayName);
                 }
             }
-
-            Update();
         }
     }
 }
