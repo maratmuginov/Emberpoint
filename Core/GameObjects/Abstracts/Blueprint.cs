@@ -103,31 +103,31 @@ namespace Emberpoint.Core.GameObjects.Abstracts
                 return (Color)prop.GetValue(null, null);
             return default;
         }
+    }
 
-        [Serializable]
-        private class BlueprintConfig
-        {
+    [Serializable]
+    internal class BlueprintConfig
+    {
 #pragma warning disable 0649
-            public int GridSizeX;
-            public int GridSizeY;
-            public BlueprintTile[] Tiles;
+        public int GridSizeX;
+        public int GridSizeY;
+        public BlueprintTile[] Tiles;
 #pragma warning restore 0649
-        }
+    }
 
-        [Serializable]
-        private class BlueprintTile
-        {
+    [Serializable]
+    internal class BlueprintTile
+    {
 #pragma warning disable 0649
-            public char Glyph;
-            public string Name;
-            public bool Walkable;
-            public string Foreground;
-            public bool BlocksFov;
-            public bool EmitsLight;
-            public string LightColor;
-            public int LightRadius;
-            public float Brightness;
+        public char Glyph;
+        public string Name;
+        public bool Walkable;
+        public string Foreground;
+        public bool BlocksFov;
+        public bool EmitsLight;
+        public string LightColor;
+        public int LightRadius;
+        public float Brightness;
 #pragma warning restore 0649
-        }
     }
 }
