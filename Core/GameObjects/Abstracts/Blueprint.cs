@@ -16,11 +16,11 @@ namespace Emberpoint.Core.GameObjects.Abstracts
         public Blueprint()
         {
             var blueprintPath = Path.Combine(Constants.Blueprint.BlueprintsPath, GetType().Name + ".txt");
-            var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, GetType().Name + ".json");
+            var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, Constants.Blueprint.BlueprintTiles + ".json");
             var config = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(blueprintConfigPath));
 
             if (!File.Exists(blueprintConfigPath) || !File.Exists(blueprintPath))
-                throw new Exception("Blueprint config file(s) were not found for " + GetType().Name);
+                throw new Exception("Blueprint config file(s) were not found for " + Constants.Blueprint.BlueprintTiles);
 
             var blueprint = File.ReadAllText(blueprintPath).Replace("\r", "").Split('\n');
 
@@ -37,7 +37,7 @@ namespace Emberpoint.Core.GameObjects.Abstracts
         {
             var name = GetType().Name;
             var blueprintPath = Path.Combine(Constants.Blueprint.BlueprintsPath, name + ".txt");
-            var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, name + ".json");
+            var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, Constants.Blueprint.BlueprintTiles + ".json");
 
             if (!File.Exists(blueprintPath) || !File.Exists(blueprintConfigPath) || !File.Exists(Constants.Blueprint.SpecialCharactersPath)) 
                 return Array.Empty<T>();
@@ -46,12 +46,14 @@ namespace Emberpoint.Core.GameObjects.Abstracts
             var specialChars = specialConfig.Tiles.ToDictionary(a => a.Glyph, a => a);
 
             var config = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(blueprintConfigPath));
-            var tiles = config.Tiles.ToDictionary(a => a.Glyph, a => a);
+            var tiles = config.Tiles.ToDictionary(a => (char?) a.Glyph, a => a);
+            var nullTile = BlueprintTile.Null();
 
             foreach (var tile in tiles)
             {
-                if (specialChars.ContainsKey(tile.Key))
-                    throw new Exception("Glyph '" + tile.Key + "': is reserved as a special character and cannot be used in " + name);
+                if (tile.Key == null) continue;
+                if (specialChars.ContainsKey(tile.Key.Value))
+                    throw new Exception("Glyph '" + tile.Key.Value + "': is reserved as a special character and cannot be used in " + name);
             }
 
             var blueprint = File.ReadAllText(blueprintPath).Replace("\r", "").Split('\n');
@@ -61,10 +63,18 @@ namespace Emberpoint.Core.GameObjects.Abstracts
             {
                 for (int x = 0; x < GridSizeX; x++)
                 {
-                    var charValue = blueprint[y][x];
+                    char? charValue;
+
+                    if (y >= blueprint.Length || x >= blueprint[y].Length)
+                    {
+                        charValue = null;
+                    } else {
+                        charValue = blueprint[y][x];
+                    }
+                    
                     var position = new Point(x, y);
-                    BlueprintTile tile;
-                    if (!tiles.TryGetValue(charValue, out tile)) 
+                    BlueprintTile tile = nullTile;
+                    if (charValue !=null && !tiles.TryGetValue(charValue, out tile)) 
                         throw new Exception("Glyph '" + charValue + "' was not present in the config file for blueprint: " + name);
                     var foregroundColor = GetColorByString(tile.Foreground);
                     var cell = new T()
@@ -130,5 +140,17 @@ namespace Emberpoint.Core.GameObjects.Abstracts
         public int LightRadius;
         public float Brightness;
 #pragma warning restore 0649
+        public static BlueprintTile Null()
+        {
+            var nullTile = new BlueprintTile
+            {
+                Glyph = ' ',
+                Foreground = "BurlyWood",
+                Name = null,
+                Walkable = false
+            };
+
+            return nullTile;
+        }
     }
 }
