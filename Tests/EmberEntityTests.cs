@@ -39,8 +39,7 @@ namespace Tests
         [Test]
         public void Entity_CanMoveTowards_IsCorrect()
         {
-            var entity = EntityManager.Create<BaseEntity>(new Point(0, 0));
-            entity.LoadGrid(_grid);
+            var entity = EntityManager.Create<BaseEntity>(new Point(0, 0), _grid);
             var cell = _grid.GetCell(0, 1);
             cell.CellProperties.Walkable = false;
             _grid.SetCell(cell, true);
@@ -52,8 +51,7 @@ namespace Tests
         [Test]
         public void Entity_MoveTowards_PositionChangeIsCorrect()
         {
-            var entity = EntityManager.Create<BaseEntity>(new Point(0, 0));
-            entity.LoadGrid(_grid);
+            var entity = EntityManager.Create<BaseEntity>(new Point(0, 0), _grid);
             var cell = _grid.GetCell(0, 1);
             cell.CellProperties.Walkable = false;
             _grid.SetCell(cell, true);
@@ -67,8 +65,7 @@ namespace Tests
         [Test]
         public void Entity_IsFieldOfView_Correct()
         {
-            var entity = EntityManager.Create<BaseEntity>(new Point(0, 0));
-            entity.LoadGrid(_grid);
+            var entity = EntityManager.Create<BaseEntity>(new Point(0, 0), _grid);
             entity.FieldOfViewRadius = 5;
             entity.FieldOfView.Calculate(entity.Position, entity.FieldOfViewRadius);
 
@@ -80,6 +77,14 @@ namespace Tests
             _grid.SetCell(cell, true);
 
             Assert.IsFalse(entity.FieldOfView.BooleanFOV[3, 0]);
+        }
+
+        [Test]
+        public void Entity_CellContainsEntity_Correct()
+        {
+            var entity = EntityManager.Create<BaseEntity>(new Point(0, 0), _grid);
+            Assert.IsTrue(_grid.ContainsEntity(entity.Position));
+            Assert.IsTrue(_grid.GetCell(entity.Position).ContainsEntity());
         }
     }
 }

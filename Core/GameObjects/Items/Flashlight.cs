@@ -3,7 +3,7 @@ using Emberpoint.Core.GameObjects.Managers;
 using Microsoft.Xna.Framework;
 using System.Timers;
 
-namespace Emberpoint.Core.GameObjects.Entities.Items
+namespace Emberpoint.Core.GameObjects.Items
 {
     public class Flashlight : EmberItem
     {

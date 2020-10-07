@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using Tests.TestObjects.Blueprints;
+using Tests.TestObjects.Entities;
 using Tests.TestObjects.Grids;
 
 namespace Tests
@@ -19,6 +21,46 @@ namespace Tests
         {
             _grid = BaseGrid.Create(20, 20);
             GridManager.InitializeCustomGrid(_grid);
+        }
+
+        [Test]
+        public void CellsAreNotExplored_EvenWhen_AreaHasLights()
+        {
+            // Initialize a blueprint for testing
+            _grid = BaseGrid.Create(new BaseBlueprint());
+            GridManager.InitializeCustomGrid(_grid);
+
+            // Create entity and calculate fov + draw it
+            var entity = EntityManager.Create<BaseEntity>(new Point(1, 1), _grid);
+            EntityManager.RecalculatFieldOfView(entity);
+            GridManager.Grid.DrawFieldOfView(entity);
+
+            var cellsWithBrightness = _grid.GetCells(a => a.LightProperties.Brightness > 0f).ToList();
+
+            foreach (var cell in cellsWithBrightness)
+            {
+                Assert.IsFalse(cell.CellProperties.IsExplored);
+            }
+        }
+
+        [Test]
+        public void CellsAreExplored_WhenEntityIsNear_LightSource()
+        {
+            // Initialize a blueprint for testing
+            _grid = BaseGrid.Create(new BaseBlueprint());
+            GridManager.InitializeCustomGrid(_grid);
+
+            // Create entity and calculate fov + draw it
+            var entity = EntityManager.Create<BaseEntity>(_grid.GetCell(a => a.LightProperties.Brightness > 0f && a.CellProperties.Walkable).Position, _grid);
+            EntityManager.RecalculatFieldOfView(entity);
+            GridManager.Grid.DrawFieldOfView(entity);
+
+            var cellsWithBrightness = _grid.GetCells(a => a.LightProperties.Brightness > 0f).ToList();
+
+            foreach (var cell in cellsWithBrightness)
+            {
+                Assert.IsTrue(cell.CellProperties.IsExplored);
+            }
         }
 
         [Test]

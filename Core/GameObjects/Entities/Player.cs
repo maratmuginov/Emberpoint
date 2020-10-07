@@ -2,7 +2,7 @@
 using System.Linq;
 using Emberpoint.Core.Extensions;
 using Emberpoint.Core.GameObjects.Abstracts;
-using Emberpoint.Core.GameObjects.Entities.Items;
+using Emberpoint.Core.GameObjects.Items;
 using Emberpoint.Core.GameObjects.Managers;
 using Emberpoint.Core.UserInterface.Windows;
 using Microsoft.Xna.Framework;
@@ -58,21 +58,31 @@ namespace Emberpoint.Core.GameObjects.Entities
             EntityManager.RecalculatFieldOfView(this, false);
 
             // Get first the further bright cells
-            var farBrightCells = GridManager.Grid.GetCellsInFov(this).Where(a => a.LightProperties.Brightness > 0f).Select(a => (char)a.Glyph).ToList();
+            var farBrightCells = GridManager.Grid.GetCellsInFov(this)
+                .Where(a => a.CellProperties.IsExplored)
+                .Where(a => a.LightProperties.Brightness > 0f)
+                .Select(a => (char)a.Glyph)
+                .ToList();
 
             FieldOfViewRadius = Constants.Player.FieldOfViewRadius;
             EntityManager.RecalculatFieldOfView(this, false);
 
             // Get normal visible cells
-            var normalCells = GridManager.Grid.GetCellsInFov(this).Select(a => (char)a.Glyph).ToList();
+            var normalCells = GridManager.Grid.GetCellsInFov(this)
+                .Where(a => a.CellProperties.IsExplored)
+                .Select(a => (char)a.Glyph)
+                .ToList();
             normalCells.AddRange(farBrightCells);
 
             // Actual cells we see
             var cells = normalCells.Distinct().ToList();
 
             // Reset player fov
-            FieldOfViewRadius = prevFov;
-            EntityManager.RecalculatFieldOfView(this, false);
+            if (FieldOfViewRadius != prevFov)
+            {
+                FieldOfViewRadius = prevFov;
+                EntityManager.RecalculatFieldOfView(this, false);
+            }
 
             // Add to the fov window
             foreach (var cell in cells)

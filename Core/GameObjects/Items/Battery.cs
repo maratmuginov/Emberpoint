@@ -3,7 +3,7 @@ using Emberpoint.Core.GameObjects.Managers;
 using Emberpoint.Core.UserInterface.Windows;
 using Microsoft.Xna.Framework;
 
-namespace Emberpoint.Core.GameObjects.Entities.Items
+namespace Emberpoint.Core.GameObjects.Items
 {
     public class Battery : EmberItem
     {

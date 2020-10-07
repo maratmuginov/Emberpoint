@@ -1,5 +1,5 @@
 ﻿using Emberpoint.Core.GameObjects.Entities;
-using Emberpoint.Core.GameObjects.Entities.Items;
+using Emberpoint.Core.GameObjects.Items;
 using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.GameObjects.Managers;
 using GoRogue;

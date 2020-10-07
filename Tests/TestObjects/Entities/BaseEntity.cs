@@ -10,7 +10,22 @@ namespace Tests.TestObjects.Entities
 {
     public class BaseEntity : IEntity
     {
-        public Point Position { get; set; }
+        private Point _position;
+        public Point Position
+        {
+            get
+            {
+                return _position;
+            }
+            set
+            {
+                if (value.X != _position.X || value.Y != _position.Y)
+                {
+                    Moved?.Invoke(this, new SadConsole.Entities.Entity.EntityMovedEventArgs(null, _position));
+                }
+                _position = value;
+            }
+        }
 
         public EventHandler<SadConsole.Entities.Entity.EntityMovedEventArgs> Moved;
 
@@ -31,18 +46,21 @@ namespace Tests.TestObjects.Entities
 
         public BaseEntity()
         {
+            // Not linked to a grid
             ObjectId = EntityManager.GetUniqueId();
             Moved += OnMove;
         }
 
-        public void LoadGrid(BaseGrid grid)
+        public BaseEntity(BaseGrid grid)
         {
             _grid = grid;
+            ObjectId = EntityManager.GetUniqueId();
+            Moved += OnMove;
         }
 
         private void OnMove(object sender, SadConsole.Entities.Entity.EntityMovedEventArgs args)
         {
-            if (FieldOfViewRadius > 0)
+            if (_grid != null && FieldOfViewRadius > -1)
             {
                 // Re-calculate the field of view
                 FieldOfView.Calculate(Position, FieldOfViewRadius);

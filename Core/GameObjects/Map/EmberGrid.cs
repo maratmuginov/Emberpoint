@@ -13,12 +13,12 @@ namespace Emberpoint.Core.GameObjects.Map
 {
     public class EmberGrid : IRenderable
     {
-        private EmberCell[] _cells;
-        private EmberCell[] Cells
+        private readonly EmberCell[] _cells;
+        protected EmberCell[] Cells
         {
             get
             {
-                return _cells ?? (_cells = Blueprint.GetCells());
+                return _cells;
             }
         }
 
@@ -33,7 +33,7 @@ namespace Emberpoint.Core.GameObjects.Map
                 {
                     for (int y = 0; y < GridSizeY; y++)
                     {
-                        var cell = GetCell(x, y);
+                        var cell = GetNonClonedCell(x, y);
                         _fieldOfView[x, y] = !cell.CellProperties.BlocksFov;
                     }
                 }
@@ -47,7 +47,7 @@ namespace Emberpoint.Core.GameObjects.Map
         public Blueprint<EmberCell> Blueprint { get; }
 
         private MapWindow _map;
-        private MapWindow Map
+        protected MapWindow Map
         {
             get
             {
@@ -56,7 +56,7 @@ namespace Emberpoint.Core.GameObjects.Map
         }
 
         private LightEngine<EmberCell> _lightEngine;
-        private LightEngine<EmberCell> LightEngine
+        protected LightEngine<EmberCell> LightEngine
         {
             get
             {
@@ -71,6 +71,9 @@ namespace Emberpoint.Core.GameObjects.Map
             GridSizeX = blueprint.GridSizeX;
             GridSizeY = blueprint.GridSizeY;
             Blueprint = blueprint;
+
+            // Initialize cells
+            _cells = Blueprint.GetCells();
         }
 
         public EmberGrid(int gridSizeX, int gridSizeY, EmberCell[] cells)
@@ -98,21 +101,6 @@ namespace Emberpoint.Core.GameObjects.Map
             LightEngine.Calibrate(Cells);
         }
 
-        public EmberCell GetFirstCell(Func<EmberCell, bool> criteria)
-        {
-            for (int x=0; x < GridSizeX; x++)
-            {
-                for (int y = 0; y < GridSizeY; y++)
-                {
-                    if (criteria.Invoke(GetNonClonedCell(x,y)))
-                    {
-                        return GetCell(x, y);
-                    }
-                }
-            }
-            return null;
-        }
-
         public IEnumerable<EmberCell> GetCells(Func<EmberCell, bool> criteria)
         {
             for (int x = 0; x < GridSizeX; x++)
@@ -138,12 +126,42 @@ namespace Emberpoint.Core.GameObjects.Map
         }
 
         /// <summary>
+        /// Retrieves the first cell that matches the given criteria.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public EmberCell GetCell(Func<EmberCell, bool> criteria)
+        {
+            for (int x = 0; x < GridSizeX; x++)
+            {
+                for (int y = 0; y < GridSizeY; y++)
+                {
+                    if (criteria.Invoke(GetNonClonedCell(x, y)))
+                    {
+                        return GetCell(x, y);
+                    }
+                }
+            }
+            return null;
+        }
+
+        public bool ContainsEntity(Point position)
+        {
+            return EntityManager.EntityExistsAt(position.X, position.Y);
+        }
+
+        public bool ContainsEntity(int x, int y)
+        {
+            return EntityManager.EntityExistsAt(x, y);
+        }
+
+        /// <summary>
         /// Use this when updating multiple cells at a time for performance.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        private EmberCell GetNonClonedCell(int x, int y)
+        protected EmberCell GetNonClonedCell(int x, int y)
         {
             return Cells[y * GridSizeX + x];
         }
@@ -184,7 +202,7 @@ namespace Emberpoint.Core.GameObjects.Map
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        private void UpdateFieldOfView(int x, int y)
+        protected void UpdateFieldOfView(int x, int y)
         {
             var cell = GetNonClonedCell(x, y);
             FieldOfView[x, y] = !cell.CellProperties.BlocksFov;
@@ -213,7 +231,7 @@ namespace Emberpoint.Core.GameObjects.Map
                 for (int y = 0; y < GridSizeY; y++)
                 {
                     var cell = GetNonClonedCell(x, y);
-                    if (entity.FieldOfView.BooleanFOV[x, y] && cell.CellProperties.IsExplored)
+                    if (entity.FieldOfView.BooleanFOV[x, y])
                     {
                         cells.Add(cell);
                     }
@@ -224,6 +242,30 @@ namespace Emberpoint.Core.GameObjects.Map
 
         public void DrawFieldOfView(IEntity entity, bool discoverUnexploredTiles = false)
         {
+            // Check if there is a lightsource nearby, then explore all cells enlighted by it automatically
+            var prevFov = entity.FieldOfViewRadius;
+
+            entity.FieldOfViewRadius = Constants.Player.DiscoverLightsRadius;
+            EntityManager.RecalculatFieldOfView(entity, false);
+
+            // Get cells that emit light
+            var cellsThatEmitLight = GridManager.Grid.GetCellsInFov(entity)
+                .Where(a => a.LightProperties.EmitsLight && !a.CellProperties.IsExplored)
+                .ToList();
+
+            // Actual cells we see
+            foreach (var lightCell in cellsThatEmitLight)
+            {
+                lightCell.CellProperties.IsExplored = true;
+            }
+
+            // Reset entity fov
+            if (prevFov != entity.FieldOfViewRadius)
+            {
+                entity.FieldOfViewRadius = prevFov;
+                EntityManager.RecalculatFieldOfView(entity, false);
+            }
+
             for (int x = 0; x < GridSizeX; x++)
             {
                 for (int y = 0; y < GridSizeY; y++)
@@ -239,10 +281,11 @@ namespace Emberpoint.Core.GameObjects.Map
                     }
 
                     // Cells near light sources are automatically visible
-                    if (cell.LightProperties.Brightness > 0f && !cell.CellProperties.IsExplored)
+                    if (cell.LightProperties.Brightness > 0f && !cell.CellProperties.IsExplored && 
+                        cell.LightProperties.LightSources.Any(a => a.CellProperties.IsExplored))
                     {
                         cell.CellProperties.IsExplored = true;
-                    }
+                    }  
 
                     cell.IsVisible = cell.CellProperties.IsExplored;
 
@@ -252,7 +295,10 @@ namespace Emberpoint.Core.GameObjects.Map
             }
 
             // Redraw the map
-            Map.Update();
+            if (Map != null)
+            {
+                Map.Update();
+            }
         }
 
         public void SetCellColors(EmberCell cell, IEntity entity)

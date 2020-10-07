@@ -24,9 +24,6 @@ namespace Emberpoint.Core.UserInterface.Windows
             // Initialize grid and render it on the map
             GridManager.InitializeBlueprint<GroundFloorBlueprint>();
             GridManager.Grid.RenderObject(this);
-
-            // After map is created, we calibrate the light engine
-            GridManager.Grid.CalibrateLightEngine();
         }
 
         public void CenterOnEntity(IEntity entity)

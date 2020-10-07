@@ -1,5 +1,5 @@
 ﻿using Emberpoint.Core.Extensions;
-using Emberpoint.Core.GameObjects.Entities.Items;
+using Emberpoint.Core.GameObjects.Items;
 using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.GameObjects.Managers;
 using Microsoft.Xna.Framework;

@@ -1,5 +1,6 @@
 ﻿using Emberpoint.Core.Extensions;
 using Emberpoint.Core.GameObjects.Interfaces;
+using Emberpoint.Core.GameObjects.Managers;
 using Microsoft.Xna.Framework;
 using SadConsole;
 using System;
@@ -13,24 +14,6 @@ namespace Emberpoint.Core.GameObjects.Map
         public LightEngineProperties LightProperties { get; set; }
 
         public Point Position { get; set; }
-
-        public EmberCell GetClosestLightSource()
-        {
-            if (LightProperties.LightSources == null) return null;
-            if (LightProperties.LightSources.Count == 1) return LightProperties.LightSources[0];
-            EmberCell closest = null;
-            float smallestDistance = float.MaxValue;
-            foreach (var source in LightProperties.LightSources)
-            {
-                var sqdistance = source.Position.SquaredDistance(Position);
-                if (smallestDistance > sqdistance)
-                {
-                    smallestDistance = sqdistance;
-                    closest = source;
-                }
-            }
-            return closest;
-        }
 
         public EmberCell() 
         {
@@ -139,6 +122,29 @@ namespace Emberpoint.Core.GameObjects.Map
             // Does foreground, background, glyph, mirror, decorators
             CopyAppearanceTo(cell);
             return cell;
+        }
+
+        public EmberCell GetClosestLightSource()
+        {
+            if (LightProperties.LightSources == null) return null;
+            if (LightProperties.LightSources.Count == 1) return LightProperties.LightSources[0];
+            EmberCell closest = null;
+            float smallestDistance = float.MaxValue;
+            foreach (var source in LightProperties.LightSources)
+            {
+                var sqdistance = source.Position.SquaredDistance(Position);
+                if (smallestDistance > sqdistance)
+                {
+                    smallestDistance = sqdistance;
+                    closest = source;
+                }
+            }
+            return closest;
+        }
+
+        public bool ContainsEntity()
+        {
+            return EntityManager.EntityExistsAt(Position);
         }
 
         public bool Equals(EmberCell other)

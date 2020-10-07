@@ -26,6 +26,7 @@ namespace Emberpoint.Core
             public const char Character = '@';
             public static Color Foreground = Color.White;
             public const int FieldOfViewRadius = 4;
+            public const int DiscoverLightsRadius = 8;
         }
 
         public static class Items
