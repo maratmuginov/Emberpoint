@@ -94,10 +94,8 @@ namespace Emberpoint.Core.GameObjects.Abstracts
                     {
                         Glyph = tile.Glyph,
                         Position = position,
-#pragma warning disable CS0618 // Type or member is obsolete
                         Foreground = foregroundColor,
                         Background = backgroundColor,
-#pragma warning restore CS0618 // Type or member is obsolete
                         CellProperties = new EmberCell.EmberCellProperties
                         {
                             NormalForeground = foregroundColor,

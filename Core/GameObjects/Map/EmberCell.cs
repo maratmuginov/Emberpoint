@@ -15,12 +15,6 @@ namespace Emberpoint.Core.GameObjects.Map
 
         public Point Position { get; set; }
 
-        // Force obsoletion, so we use CellProperties instead.
-        [Obsolete("Use CellProperties.NormalForeground instead.")]
-        public new Color Foreground;
-        [Obsolete("Use CellProperties.NormalBackground instead.")]
-        public new Color Background;
-
         public EmberCell() 
         {
             CellProperties = new EmberCellProperties
@@ -36,11 +30,8 @@ namespace Emberpoint.Core.GameObjects.Map
 
             Glyph = ' ';
             LightProperties = new LightEngineProperties();
-
-#pragma warning disable CS0618 // Type or member is obsolete
             Foreground = CellProperties.NormalForeground;
             Background = CellProperties.NormalBackground;
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         public EmberCell(Point position, int glyph, Color foreground, Color fov)
@@ -58,12 +49,8 @@ namespace Emberpoint.Core.GameObjects.Map
 
             Position = position;
             Glyph = glyph;
-
-#pragma warning disable CS0618 // Type or member is obsolete
             Foreground = foreground;
             Background = Color.Black;
-#pragma warning restore CS0618 // Type or member is obsolete
-
             LightProperties = new LightEngineProperties();
         }
 
@@ -82,12 +69,8 @@ namespace Emberpoint.Core.GameObjects.Map
 
             Position = position;
             Glyph = glyph;
-
-#pragma warning disable CS0618 // Type or member is obsolete
             Foreground = foreground;
             Background = background;
-#pragma warning restore CS0618 // Type or member is obsolete
-
             LightProperties = new LightEngineProperties();
         }
 

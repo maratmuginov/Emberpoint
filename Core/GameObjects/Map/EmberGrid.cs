@@ -312,7 +312,6 @@ namespace Emberpoint.Core.GameObjects.Map
             {
                 var closestLightSource = cell.GetClosestLightSource();
                 Color lightSourceColor = closestLightSource?.LightProperties.LightColor ?? Color.White;
-#pragma warning disable CS0618 // Type or member is obsolete
                 cell.Foreground = Color.Lerp(cell.CellProperties.NormalForeground, lightSourceColor, cell.LightProperties.Brightness);
                 cell.Background = Color.Lerp(cell.CellProperties.NormalBackground, lightSourceColor, cell.LightProperties.Brightness / 3f);
             }
@@ -320,7 +319,6 @@ namespace Emberpoint.Core.GameObjects.Map
             {
                 cell.Foreground = cell.CellProperties.ForegroundFov;
                 cell.Background = cell.CellProperties.BackgroundFov;
-#pragma warning restore CS0618 // Type or member is obsolete
             }
         }
 

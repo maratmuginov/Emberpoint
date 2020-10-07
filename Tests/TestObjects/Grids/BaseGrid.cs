@@ -21,10 +21,8 @@ namespace Tests.TestObjects.Grids
                 {
                     var cell = new EmberCell
                     {
-#pragma warning disable CS0618 // Type or member is obsolete
                         Background = Color.Black,
                         Foreground = Color.Gray,
-#pragma warning restore CS0618 // Type or member is obsolete
                         Glyph = ' ',
                         Position = new Point(x, y)
                     };
@@ -33,12 +31,10 @@ namespace Tests.TestObjects.Grids
                         Name = null,
                         Walkable = true,
                         BlocksFov = false,
-#pragma warning disable CS0618 // Type or member is obsolete
                         NormalForeground = cell.Foreground,
                         NormalBackground = cell.Background,
                         ForegroundFov = Color.Lerp(cell.Foreground, Color.Black, .5f),
                         BackgroundFov = cell.Background
-#pragma warning restore CS0618 // Type or member is obsolete
                     };
                     cells[y * width + x] = cell;
                 }
