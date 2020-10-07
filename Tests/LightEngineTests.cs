@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using Tests.TestObjects.Grids;
 
 namespace Tests
 {
@@ -16,7 +17,7 @@ namespace Tests
         [SetUp]
         protected virtual void Setup()
         {
-            _grid = EmberGridTests.BuildCustomGrid(20, 20);
+            _grid = BaseGrid.Create(20, 20);
             GridManager.InitializeCustomGrid(_grid);
         }
 

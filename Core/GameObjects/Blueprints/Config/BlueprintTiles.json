@@ -1,6 +1,13 @@
 {
   "tiles": [
     {
+      "glyph" : " ",
+      "name" : null,
+      "walkable" : false,
+	  "foreground" : "BurlyWood",
+	  "blocksfov" : true
+    },
+    {
       "glyph" : ".",
       "name" : "Floor",
       "walkable" : true,

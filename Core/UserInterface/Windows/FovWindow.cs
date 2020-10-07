@@ -43,7 +43,7 @@ namespace Emberpoint.Core.UserInterface.Windows
         private Dictionary<char, BlueprintTile> GetTilesFromConfig()
         {
             var name = GridManager.Grid.Blueprint.GetType().Name;
-            var blueprintPath = Path.Combine(Constants.Blueprint.BlueprintsPath, name + ".txt");
+            var blueprintPath = Path.Combine(GridManager.Grid.Blueprint.BlueprintPath, name + ".txt");
             var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, Constants.Blueprint.BlueprintTiles + ".json");
 
             if (!File.Exists(blueprintPath) || !File.Exists(blueprintConfigPath) || !File.Exists(Constants.Blueprint.SpecialCharactersPath))
@@ -68,7 +68,7 @@ namespace Emberpoint.Core.UserInterface.Windows
             if (_charObjects.ContainsKey(character)) return;
 
             // Retrieve character name from the config
-            if (!_blueprintTiles.TryGetValue(character, out BlueprintTile tile)) return;
+            if (!_blueprintTiles.TryGetValue(character, out BlueprintTile tile) || tile.Name == null) return;
             var glyphColor = GetColorByString(tile.Foreground);
 
             _charObjects.Add(character, new CharObj

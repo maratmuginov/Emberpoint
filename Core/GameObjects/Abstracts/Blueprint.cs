@@ -12,10 +12,22 @@ namespace Emberpoint.Core.GameObjects.Abstracts
     {
         public int GridSizeX { get; private set; }
         public int GridSizeY { get; private set; }
+        public string BlueprintPath { get; private set; }
 
         public Blueprint()
         {
-            var blueprintPath = Path.Combine(Constants.Blueprint.BlueprintsPath, GetType().Name + ".txt");
+            InitializeBlueprint(Constants.Blueprint.BlueprintsPath);
+        }
+
+        protected Blueprint(string customPath)
+        {
+            InitializeBlueprint(customPath);
+        }
+
+        private void InitializeBlueprint(string path)
+        {
+            BlueprintPath = path;
+            var blueprintPath = Path.Combine(BlueprintPath, GetType().Name + ".txt");
             var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, Constants.Blueprint.BlueprintTiles + ".json");
             var config = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(blueprintConfigPath));
 
@@ -36,7 +48,7 @@ namespace Emberpoint.Core.GameObjects.Abstracts
         public T[] GetCells()
         {
             var name = GetType().Name;
-            var blueprintPath = Path.Combine(Constants.Blueprint.BlueprintsPath, name + ".txt");
+            var blueprintPath = Path.Combine(BlueprintPath, name + ".txt");
             var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, Constants.Blueprint.BlueprintTiles + ".json");
 
             if (!File.Exists(blueprintPath) || !File.Exists(blueprintConfigPath) || !File.Exists(Constants.Blueprint.SpecialCharactersPath)) 
