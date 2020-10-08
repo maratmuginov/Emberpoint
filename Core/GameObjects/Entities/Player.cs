@@ -5,7 +5,6 @@ using Emberpoint.Core.Extensions;
 using Emberpoint.Core.GameObjects.Abstracts;
 using Emberpoint.Core.GameObjects.Items;
 using Emberpoint.Core.GameObjects.Managers;
-using Emberpoint.Core.GameObjects.Map;
 using Emberpoint.Core.UserInterface.Windows;
 using Microsoft.Xna.Framework;
 using SadConsole;

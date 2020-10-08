@@ -87,7 +87,7 @@ namespace Emberpoint.Core.GameObjects.Map
             {
                 for (int y = 0; y < GridSizeY; y++)
                 {
-                    var cell = GetCell(x, y);
+                    var cell = GetNonClonedCell(x, y);
                     _fieldOfView[x, y] = !cell.CellProperties.BlocksFov;
                 }
             }
@@ -176,7 +176,7 @@ namespace Emberpoint.Core.GameObjects.Map
             // Adjust the lights of the tiles
             if (adjustLights)
             {
-                LightEngine.AdjustLights(cell, originalCell.Clone());
+                LightEngine.AdjustLightSource(cell, originalCell.Clone());
             }
 
             // Copy the new cell data
