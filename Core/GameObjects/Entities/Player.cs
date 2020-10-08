@@ -15,22 +15,17 @@ namespace Emberpoint.Core.GameObjects.Entities
     public class Player : EmberEntity
     {
         private InventoryWindow _inventory;
-        public InventoryWindow Inventory
-        {
-            get => _inventory ??= UserInterfaceManager.Get<InventoryWindow>();
-        }
+        public InventoryWindow Inventory => _inventory ??= UserInterfaceManager.Get<InventoryWindow>();
 
         private MapWindow _mapWindow;
-        public MapWindow MapWindow
-        {
-            get => _mapWindow ??= UserInterfaceManager.Get<MapWindow>();
-        }
+        public MapWindow MapWindow => _mapWindow ??= UserInterfaceManager.Get<MapWindow>();
 
-        private FovWindow _fovObjectsWindow;
+        private readonly FovWindow _fovObjectsWindow;
 
         public Player() : base(Constants.Player.Foreground, Color.Transparent, Constants.Player.Character, 1, 1)
         {
             FieldOfViewRadius = 0;
+            _fovObjectsWindow = UserInterfaceManager.Get<FovWindow>();
             Components.Add(new EntityViewSyncComponent());
         }
 
@@ -43,20 +38,7 @@ namespace Emberpoint.Core.GameObjects.Entities
             base.OnMove(sender, args);
 
             // Update visible objects in fov window
-            UpdateFovWindow();
-        }
-
-        private void UpdateFovWindow()
-        {
-            _fovObjectsWindow ??= UserInterfaceManager.Get<FovWindow>();
             _fovObjectsWindow.Update(this);
-        }
-
-        private IEnumerable<char> GetBrightCellsInFov(int fovRadius)
-        {
-            return GridManager.Grid.GetExploredCellsInFov(this, fovRadius)
-                .Where(a => a.LightProperties.Brightness > 0f)
-                .Select(a => (char) a.Glyph);
         }
 
         public override void Update(TimeSpan timeElapsed)
@@ -79,12 +61,12 @@ namespace Emberpoint.Core.GameObjects.Entities
             // Center viewport on player
             MapWindow.CenterOnEntity(this);
 
-            UpdateFovWindow();
+            _fovObjectsWindow.Update(this);
         }
 
         public void CheckForInteractionKeys()
         {
-            //If this will grow in the future, we may want to add a Dictionary<Keybinding, EmberItem>
+            //If this will grow in the future, we may want to add a Dictionary<Keybindings, EmberItem>
             // to efficiently retrieve and activate items.
             if (Global.KeyboardState.IsKeyPressed(KeybindingsManager.GetKeybinding(Keybindings.Flashlight)))
             {

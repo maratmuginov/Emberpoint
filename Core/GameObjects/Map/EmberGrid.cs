@@ -14,13 +14,7 @@ namespace Emberpoint.Core.GameObjects.Map
     public class EmberGrid : IRenderable
     {
         private readonly EmberCell[] _cells;
-        protected EmberCell[] Cells
-        {
-            get
-            {
-                return _cells;
-            }
-        }
+        protected EmberCell[] Cells => _cells;
 
         private ArrayMap<bool> _fieldOfView;
         public ArrayMap<bool> FieldOfView
@@ -228,15 +222,17 @@ namespace Emberpoint.Core.GameObjects.Map
 
         public IEnumerable<EmberCell> GetCellsInFov(IEntity entity)
         {
+            var cells = new List<EmberCell>();
             for (int x = 0; x < GridSizeX; x++)
             {
                 for (int y = 0; y < GridSizeY; y++)
                 {
                     var cell = GetNonClonedCell(x, y);
                     if (entity.FieldOfView.BooleanFOV[x, y])
-                        yield return cell.Clone();
+                        cells.Add(cell);
                 }
             }
+            return cells;
         }
 
         public IEnumerable<EmberCell> GetCellsInFov(IEntity entity, int fovRadius)
@@ -254,7 +250,7 @@ namespace Emberpoint.Core.GameObjects.Map
             return cells;
         }
 
-        public IEnumerable<EmberCell> GetExploredCells(IEntity entity)
+        public IEnumerable<EmberCell> GetExploredCellsInFov(IEntity entity)
         {
             return GetCellsInFov(entity).Where(cell => cell.CellProperties.IsExplored);
         }
