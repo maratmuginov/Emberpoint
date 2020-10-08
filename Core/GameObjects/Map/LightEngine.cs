@@ -17,6 +17,7 @@ namespace Emberpoint.Core.GameObjects.Map
 
         /// <summary>
         /// Call this method instead from EmberGrid.CalibrateLightEngine();
+        /// Initializes all the lightsources present in the scene.
         /// </summary>
         /// <param name="cells"></param>
         public void Calibrate(T[] cells)
