@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework;
 using SadConsole;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Emberpoint.Core.GameObjects.Map
 {
@@ -169,6 +171,35 @@ namespace Emberpoint.Core.GameObjects.Map
         public override int GetHashCode()
         {
             return 0;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("[EmberCell Information]");
+            sb.AppendLine($"<Position>: [X] {Position.X} [Y] {Position.Y}");
+            sb.AppendLine();
+            sb.AppendLine("[CellProperties]");
+            sb.AppendLine($"<Name>: {CellProperties.Name}");
+            sb.AppendLine($"<Walkable>: {CellProperties.Walkable}");
+            sb.AppendLine($"<BlocksFov>: {CellProperties.BlocksFov}");
+            sb.AppendLine($"<IsExplored>: {CellProperties.IsExplored}");
+            sb.AppendLine();
+            sb.AppendLine("[LightProperties]");
+            sb.AppendLine($"<EmitsLight>: {LightProperties.EmitsLight}");
+            sb.AppendLine($"<Brightness>: {LightProperties.Brightness}");
+            sb.AppendLine($"<LightRadius>: {LightProperties.LightRadius}");
+            sb.AppendLine($"<LightColor>: {LightProperties.LightColor}");
+            if (LightProperties.LightSources != null)
+            {
+                sb.AppendLine("<<LightSources>>");
+                foreach (var lightSource in LightProperties.LightSources)
+                {
+                    sb.AppendLine($"<LightSource>: [X] {lightSource.Position.X} [Y] {lightSource.Position.Y}");
+                }
+            }
+            sb.AppendLine("[---------------------]");
+            return sb.ToString();
         }
 
         public class LightEngineProperties

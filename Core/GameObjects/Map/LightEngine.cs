@@ -116,7 +116,7 @@ namespace Emberpoint.Core.GameObjects.Map
             }
         }
 
-        public void CalculateLightSource(EmberCell cell)
+        private void CalculateLightSource(EmberCell cell)
         {
             if (cell.LightProperties.EmitsLight)
             {
