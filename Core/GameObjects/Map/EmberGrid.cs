@@ -14,13 +14,7 @@ namespace Emberpoint.Core.GameObjects.Map
     public class EmberGrid : IRenderable
     {
         private readonly EmberCell[] _cells;
-        protected EmberCell[] Cells
-        {
-            get
-            {
-                return _cells;
-            }
-        }
+        protected EmberCell[] Cells => _cells;
 
         private ArrayMap<bool> _fieldOfView;
         public ArrayMap<bool> FieldOfView
@@ -226,7 +220,7 @@ namespace Emberpoint.Core.GameObjects.Map
             }
         }
 
-        public List<EmberCell> GetCellsInFov(IEntity entity)
+        public IEnumerable<EmberCell> GetCellsInFov(IEntity entity)
         {
             var cells = new List<EmberCell>();
             for (int x = 0; x < GridSizeX; x++)
@@ -235,12 +229,35 @@ namespace Emberpoint.Core.GameObjects.Map
                 {
                     var cell = GetNonClonedCell(x, y);
                     if (entity.FieldOfView.BooleanFOV[x, y])
-                    {
                         cells.Add(cell);
-                    }
                 }
             }
             return cells;
+        }
+
+        public IEnumerable<EmberCell> GetCellsInFov(IEntity entity, int fovRadius)
+        {
+            var originalFov = entity.FieldOfViewRadius;
+
+            entity.FieldOfViewRadius = fovRadius;
+            EntityManager.RecalculatFieldOfView(entity, false);
+
+            var cells = GetCellsInFov(entity).ToList();
+
+            entity.FieldOfViewRadius = originalFov;
+            EntityManager.RecalculatFieldOfView(entity, false);
+
+            return cells;
+        }
+
+        public IEnumerable<EmberCell> GetExploredCellsInFov(IEntity entity)
+        {
+            return GetCellsInFov(entity).Where(cell => cell.CellProperties.IsExplored);
+        }
+
+        public IEnumerable<EmberCell> GetExploredCellsInFov(IEntity entity, int fovRadius)
+        {
+            return GetCellsInFov(entity, fovRadius).Where(cell => cell.CellProperties.IsExplored);
         }
 
         public void DrawFieldOfView(IEntity entity, bool discoverUnexploredTiles = false)
