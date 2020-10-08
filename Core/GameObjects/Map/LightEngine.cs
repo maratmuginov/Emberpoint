@@ -26,17 +26,17 @@ namespace Emberpoint.Core.GameObjects.Map
             {
                 var original = GridManager.Grid.GetCell(cell.Position);
                 original.LightProperties.EmitsLight = false;
-                AdjustLights(cell, original);
+                AdjustLightSource(cell, original);
             }
             _isCalibrated = true;
         }
 
-        public void AdjustLights(EmberCell newCell, EmberCell oldCell)
+        public void AdjustLightSource(EmberCell newCell, EmberCell oldCell)
         {
             if (newCell.LightProperties.EmitsLight == oldCell.LightProperties.EmitsLight) return;
 
             if (newCell.LightProperties.EmitsLight)
-                CalculateLightSource(newCell);
+                SetLightSource(newCell);
             else
                 UnsetLightSource(newCell);
         }
@@ -74,10 +74,10 @@ namespace Emberpoint.Core.GameObjects.Map
                 GridManager.Grid.SetCell(cell, false, false);
             }
 
-            // Calculate light source for the remaining light sources
+            // Re-set for the remaining light sources
             foreach (var source in lightSourcesToRecalculate.Distinct())
             {
-                CalculateLightSource(source);
+                SetLightSource(source);
             }
 
             // Make sure we set the new version of newCell's LightProperties incase they have changed during recalculation.
@@ -104,7 +104,7 @@ namespace Emberpoint.Core.GameObjects.Map
             }
         }
 
-        private void CalculateLightSource(EmberCell cell)
+        private void SetLightSource(EmberCell cell)
         {
             if (cell.LightProperties.EmitsLight)
             {

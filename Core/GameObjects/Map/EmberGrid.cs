@@ -176,7 +176,7 @@ namespace Emberpoint.Core.GameObjects.Map
             // Adjust the lights of the tiles
             if (adjustLights)
             {
-                LightEngine.AdjustLights(cell, originalCell.Clone());
+                LightEngine.AdjustLightSource(cell, originalCell.Clone());
             }
 
             // Copy the new cell data
