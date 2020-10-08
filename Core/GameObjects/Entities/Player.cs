@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Emberpoint.Core.Extensions;
 using Emberpoint.Core.GameObjects.Abstracts;
@@ -17,19 +18,13 @@ namespace Emberpoint.Core.GameObjects.Entities
         private InventoryWindow _inventory;
         public InventoryWindow Inventory
         {
-            get
-            {
-                return _inventory ??= UserInterfaceManager.Get<InventoryWindow>();
-            }
+            get => _inventory ??= UserInterfaceManager.Get<InventoryWindow>();
         }
 
         private MapWindow _mapWindow;
         public MapWindow MapWindow
         {
-            get
-            {
-                return _mapWindow ??= UserInterfaceManager.Get<MapWindow>();
-            }
+            get => _mapWindow ??= UserInterfaceManager.Get<MapWindow>();
         }
 
         private FovWindow _fovObjectsWindow;
@@ -54,48 +49,15 @@ namespace Emberpoint.Core.GameObjects.Entities
 
         private void UpdateFovWindow()
         {
-            var fovObjectsWindow = _fovObjectsWindow ??= UserInterfaceManager.Get<FovWindow>();
+            _fovObjectsWindow ??= UserInterfaceManager.Get<FovWindow>();
+            _fovObjectsWindow.Update(this);
+        }
 
-            var prevFov = FieldOfViewRadius;
-            // Get all unique characters visible in the fov radius and display them in the fovObjectsWindow
-            // The fov is bigger for certain cells with brightness
-            FieldOfViewRadius = Constants.Player.FieldOfViewRadius + 3;
-            EntityManager.RecalculatFieldOfView(this, false);
-
-            // Get first the further bright cells
-            var farBrightCells = GridManager.Grid.GetCellsInFov(this)
-                .Where(a => a.CellProperties.IsExplored)
+        private IEnumerable<char> GetBrightCellsInFov(int fovRadius)
+        {
+            return GridManager.Grid.GetExploredCellsInFov(this, fovRadius)
                 .Where(a => a.LightProperties.Brightness > 0f)
-                .Select(a => (char)a.Glyph)
-                .ToList();
-
-            FieldOfViewRadius = Constants.Player.FieldOfViewRadius;
-            EntityManager.RecalculatFieldOfView(this, false);
-
-            // Get normal visible cells
-            var normalCells = GridManager.Grid.GetCellsInFov(this)
-                .Where(a => a.CellProperties.IsExplored)
-                .Select(a => (char)a.Glyph)
-                .ToList();
-            normalCells.AddRange(farBrightCells);
-
-            // Actual cells we see
-            var cells = normalCells.Distinct().ToList();
-
-            // Reset player fov
-            if (FieldOfViewRadius != prevFov)
-            {
-                FieldOfViewRadius = prevFov;
-                EntityManager.RecalculatFieldOfView(this, false);
-            }
-
-            // Add to the fov window
-            foreach (var cell in cells)
-            {
-                fovObjectsWindow.Add(cell, false);
-            }
-            fovObjectsWindow.RemoveAllExcept(cells);
-            fovObjectsWindow.UpdateText();
+                .Select(a => (char) a.Glyph);
         }
 
         public override void Update(TimeSpan timeElapsed)
@@ -123,34 +85,32 @@ namespace Emberpoint.Core.GameObjects.Entities
 
         public void CheckForInteractionKeys()
         {
+            //If this will grow in the future, we may want to add a Dictionary<Keybinding, EmberItem>
+            // to efficiently retrieve and activate items.
             if (Global.KeyboardState.IsKeyPressed(KeybindingsManager.GetKeybinding(Keybindings.Flashlight)))
             {
                 var flashLight = Game.Player.Inventory.GetItemOfType<Flashlight>();
-                if (flashLight != null)
-                {
-                    flashLight.Switch();
-                }
+                flashLight?.Switch();
             }
         }
 
         public void CheckForMovementKeys()
         {
-            if (Global.KeyboardState.IsKeyPressed(KeybindingsManager.GetKeybinding(Keybindings.Movement_Up))) 
+            foreach (var movementKey in _playerMovements.Keys
+                .Where(key => Global.KeyboardState.IsKeyPressed(KeybindingsManager.GetKeybinding(key))))
             {
-                MoveTowards(Position.Translate(0, -1)); // Move up
-            }
-            else if (Global.KeyboardState.IsKeyPressed(KeybindingsManager.GetKeybinding(Keybindings.Movement_Down)))
-            {
-                MoveTowards(Position.Translate(0, 1)); // Move down
-            }
-            else if (Global.KeyboardState.IsKeyPressed(KeybindingsManager.GetKeybinding(Keybindings.Movement_Left)))
-            {
-                MoveTowards(Position.Translate(-1, 0)); // Move left
-            }
-            else if (Global.KeyboardState.IsKeyPressed(KeybindingsManager.GetKeybinding(Keybindings.Movement_Right)))
-            {
-                MoveTowards(Position.Translate(1, 0)); // Move right
+                var (x, y) = _playerMovements[movementKey];
+                MoveTowards(Position.Translate(x, y));
             }
         }
+
+        private readonly Dictionary<Keybindings, (int x, int y)> _playerMovements = 
+        new Dictionary<Keybindings, (int x, int y)>
+        {
+            {Keybindings.Movement_Up, (0, -1)},
+            {Keybindings.Movement_Down, (0, 1)},
+            {Keybindings.Movement_Left, (-1, 0)},
+            {Keybindings.Movement_Right, (1, 0)}
+        };
     }
 }
