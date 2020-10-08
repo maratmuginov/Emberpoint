@@ -104,7 +104,7 @@ namespace Emberpoint.Core.UserInterface.Windows
         }
         private void DrawCharObj(CharObj charObj)
         {
-            _textConsole.Cursor.Print(new ColoredString('[' + charObj.Glyph + "]:", charObj.GlyphColor, Color.Transparent));
+            _textConsole.Cursor.Print(new ColoredString('[' + charObj.Glyph.ToString() + "]:", charObj.GlyphColor, Color.Transparent));
             _textConsole.Cursor.Print(' ' + charObj.Name);
             _textConsole.Cursor.CarriageReturn();
             _textConsole.Cursor.LineFeed();
