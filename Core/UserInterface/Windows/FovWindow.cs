@@ -1,5 +1,4 @@
-﻿using System;
-using Emberpoint.Core.Extensions;
+﻿using Emberpoint.Core.Extensions;
 using Emberpoint.Core.GameObjects.Abstracts;
 using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.GameObjects.Managers;
@@ -97,17 +96,11 @@ namespace Emberpoint.Core.UserInterface.Windows
 
             var orderedValues = _charObjects.OrderBy(x => x.Key).Select(pair => pair.Value);
 
+            foreach (var charObj in orderedValues.Take(_maxLineRows - 1))
+                DrawCharObj(charObj);
+
             if (_charObjects.Count > _maxLineRows)
-            {
-                foreach (var charObj in orderedValues.Take(_maxLineRows - 1))
-                    DrawCharObj(charObj);
                 _textConsole.Cursor.Print("<More Objects..>");
-            }
-            else
-            {
-                foreach (var charObj in orderedValues)
-                    DrawCharObj(charObj);
-            }
         }
         private void DrawCharObj(CharObj charObj)
         {
@@ -119,7 +112,7 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         public void Update(IEntity entity)
         {
-            var farBrightCells = GetBrightCellsInFov(entity, Constants.Player.FieldOfViewRadius + 3).Distinct();
+            var farBrightCells = GetBrightCellsInFov(entity, Constants.Player.FieldOfViewRadius + 3);
 
             // Gets cells player can see after FOV refresh.
             var cells = GridManager.Grid.GetExploredCellsInFov(entity, Constants.Player.FieldOfViewRadius)
