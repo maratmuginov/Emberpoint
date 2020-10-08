@@ -246,7 +246,7 @@ namespace Emberpoint.Core.GameObjects.Map
             entity.FieldOfViewRadius = fovRadius;
             EntityManager.RecalculatFieldOfView(entity, false);
 
-            var cells = GetCellsInFov(entity);
+            var cells = GetCellsInFov(entity).ToList();
 
             entity.FieldOfViewRadius = originalFov;
             EntityManager.RecalculatFieldOfView(entity, false);

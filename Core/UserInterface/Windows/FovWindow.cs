@@ -72,27 +72,6 @@ namespace Emberpoint.Core.UserInterface.Windows
                 UpdateText();
         }
 
-        //public void Add(char character, bool updateText = true)
-        //{
-        //    if (_charObjects.ContainsKey(character)) return;
-
-        //    // Retrieve character name from the config
-        //    if (!_blueprintTiles.TryGetValue(character, out BlueprintTile tile) || tile.Name == null) return;
-        //    var glyphColor = GetColorByString(tile.Foreground);
-
-        //    _charObjects.Add(character, new CharObj
-        //    {
-        //        Glyph = tile.Glyph,
-        //        GlyphColor = glyphColor,
-        //        Name = tile.Name
-        //    });
-
-        //    if (updateText)
-        //    {
-        //        UpdateText();
-        //    }
-        //}
-
         private IEnumerable<KeyValuePair<char, CharObj>> GetCharObjectPairs(IEnumerable<char> characters)
         {
             foreach (var character in characters)
@@ -140,8 +119,7 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         public void Update(IEntity entity)
         {
-            int prevFov = entity.FieldOfViewRadius;
-            var farBrightCells = GetBrightCellsInFov(entity, Constants.Player.FieldOfViewRadius + 3);
+            var farBrightCells = GetBrightCellsInFov(entity, Constants.Player.FieldOfViewRadius + 3).Distinct();
 
             // Gets cells player can see after FOV refresh.
             var cells = GridManager.Grid.GetExploredCellsInFov(entity, Constants.Player.FieldOfViewRadius)
@@ -150,13 +128,6 @@ namespace Emberpoint.Core.UserInterface.Windows
                 .Union(farBrightCells)
                 //Take only unique cells as an array.
                 .Distinct();
-
-            // Reset player FOV
-            //if (entity.FieldOfViewRadius != prevFov)
-            //{
-            //    entity.FieldOfViewRadius = prevFov;
-            //    EntityManager.RecalculatFieldOfView(entity, false);
-            //}
 
             // Draw visible cells to the FOV window
             ReinitializeCharObjects(characters: cells, updateText: false);
