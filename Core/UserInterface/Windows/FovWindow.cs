@@ -44,24 +44,30 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         private Dictionary<char, BlueprintTile> GetTilesFromConfig()
         {
-            var name = GridManager.Grid.Blueprint.GetType().Name;
-            var blueprintPath = Path.Combine(GridManager.Grid.Blueprint.BlueprintPath, name + ".txt");
-            var blueprintConfigPath = Path.Combine(Constants.Blueprint.BlueprintsConfigPath, Constants.Blueprint.BlueprintTiles + ".json");
+            var configPaths = GetConfigurationPaths();
 
-            if (!File.Exists(blueprintPath) || !File.Exists(blueprintConfigPath) || !File.Exists(Constants.Blueprint.SpecialCharactersPath))
+            if (AllConfigFilesExist(configPaths) == false)
                 return new Dictionary<char, BlueprintTile>();
 
-            var specialConfig = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(Constants.Blueprint.SpecialCharactersPath));
-            var specialChars = specialConfig.Tiles.ToDictionary(a => a.Glyph, a => a);
+            var configs = GetConfigurations(configPaths);
+            var tiles = GetBlueprintConfigValuePairs(configs);
 
-            var config = JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(blueprintConfigPath));
-            var tiles = config.Tiles.ToDictionary(a => a.Glyph, a => a);
-
-            foreach (var (key, value) in specialChars)
-                tiles.Add(key, value);
-
-            return tiles;
+            return new Dictionary<char, BlueprintTile>(tiles);
         }
+
+        private string[] GetConfigurationPaths() => new[]
+        {
+            Path.Combine(Constants.Blueprint.BlueprintsConfigPath, Constants.Blueprint.BlueprintTiles + ".json"),
+            Constants.Blueprint.SpecialCharactersPath
+        };
+
+        private bool AllConfigFilesExist(IEnumerable<string> configPaths) => configPaths.All(File.Exists);
+
+        private IEnumerable<BlueprintConfig> GetConfigurations(params string[] configPaths) =>
+            configPaths.Select(path=> JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(path)));
+
+        private IEnumerable<KeyValuePair<char, BlueprintTile>> GetBlueprintConfigValuePairs(IEnumerable<BlueprintConfig> configs) =>
+            configs.SelectMany(config=> config.Tiles.Select(a => new KeyValuePair<char, BlueprintTile>(a.Glyph, a)));
 
         public void ReinitializeCharObjects(IEnumerable<char> characters, bool updateText = true)
         {
