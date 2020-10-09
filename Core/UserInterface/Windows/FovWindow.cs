@@ -1,5 +1,6 @@
 ﻿using Emberpoint.Core.Extensions;
 using Emberpoint.Core.GameObjects.Abstracts;
+using Emberpoint.Core.GameObjects.Entities;
 using Emberpoint.Core.GameObjects.Interfaces;
 using Emberpoint.Core.GameObjects.Managers;
 using Microsoft.Xna.Framework;
@@ -8,6 +9,7 @@ using SadConsole;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Console = SadConsole.Console;
 
 namespace Emberpoint.Core.UserInterface.Windows
 {
@@ -17,7 +19,8 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         private readonly int _maxLineRows;
         private readonly Console _textConsole;
-        private readonly Dictionary<char, CharObj> _charObjects;
+        //Recreated with ReinitializeCharObjects()
+        private Dictionary<char, CharObj> _charObjects;
         private readonly Dictionary<char, BlueprintTile> _blueprintTiles;
 
         public FovWindow(int width, int height) : base(width, height)
@@ -67,24 +70,21 @@ namespace Emberpoint.Core.UserInterface.Windows
         private IEnumerable<KeyValuePair<char, BlueprintTile>> GetBlueprintConfigValuePairs(IEnumerable<BlueprintConfig> configs) =>
             configs.SelectMany(config => config.Tiles.Select(a => new KeyValuePair<char, BlueprintTile>(a.Glyph, a)));
 
-        public void Add(char character, bool updateText = true)
+        private void ReinitializeCharObjects(IEnumerable<char> characters, bool updateText = true)
         {
-            if (_charObjects.ContainsKey(character)) return;
-
-            // Retrieve character name from the config
-            if (!_blueprintTiles.TryGetValue(character, out BlueprintTile tile) || tile.Name == null) return;
-            var glyphColor = GetColorByString(tile.Foreground);
-
-            _charObjects.Add(character, new CharObj
-            {
-                Glyph = tile.Glyph,
-                GlyphColor = glyphColor,
-                Name = tile.Name
-            });
+            _charObjects = new Dictionary<char, CharObj>(GetCharObjectPairs(characters));
 
             if (updateText)
-            {
                 UpdateText();
+        }
+
+        private IEnumerable<KeyValuePair<char, CharObj>> GetCharObjectPairs(IEnumerable<char> characters)
+        {
+            foreach (var character in characters)
+            {
+                if (!_blueprintTiles.TryGetValue(character, out var tile) || tile.Name == null) continue;
+                var glyphColor = GetColorByString(tile.Foreground);
+                yield return new KeyValuePair<char, CharObj>(character, new CharObj(tile.Glyph, glyphColor, tile.Name));
             }
         }
 
@@ -96,52 +96,66 @@ namespace Emberpoint.Core.UserInterface.Windows
             return default;
         }
 
-        public void RemoveAllExcept(List<char> characters)
-        {
-            var toBeRemoved = new List<char>();
-            foreach (var c in _charObjects)
-            {
-                if (!characters.Contains(c.Key))
-                    toBeRemoved.Add(c.Key);
-            }
-
-            foreach (var r in toBeRemoved)
-                _charObjects.Remove(r);
-        }
-
-        public void UpdateText()
+        private void UpdateText()
         {
             _textConsole.Clear();
             _textConsole.Cursor.Position = new Point(0, 0);
 
+            var orderedValues = _charObjects.OrderBy(x => x.Key).Select(pair => pair.Value);
+
+            foreach (var charObj in orderedValues.Take(_maxLineRows - 1))
+                DrawCharObj(charObj);
+
             if (_charObjects.Count > _maxLineRows)
-            {
-                foreach (var item in _charObjects.OrderBy(x => x.Key).Take(_maxLineRows - 1))
-                {
-                    _textConsole.Cursor.Print(new ColoredString("[" + item.Value.Glyph + "]:", item.Value.GlyphColor, Color.Transparent));
-                    _textConsole.Cursor.Print(" " + item.Value.Name);
-                    _textConsole.Cursor.CarriageReturn();
-                    _textConsole.Cursor.LineFeed();
-                }
                 _textConsole.Cursor.Print("<More Objects..>");
-            }
-            else
+        }
+
+        private void DrawCharObj(CharObj charObj)
+        {
+            _textConsole.Cursor.Print(new ColoredString("[" + charObj.Glyph + "]:", charObj.GlyphColor, Color.Transparent));
+            _textConsole.Cursor.Print(' ' + charObj.Name);
+            _textConsole.Cursor.CarriageReturn();
+            _textConsole.Cursor.LineFeed();
+        }
+
+        public void Update(IEntity entity)
+        {
+            int radius = entity is Player ? Constants.Player.FieldOfViewRadius : entity.FieldOfViewRadius;
+            var farBrightCells = GetBrightCellsInFov(entity, radius + 3);
+
+            // Gets cells player can see after FOV refresh.
+            var cells = GridManager.Grid.GetExploredCellsInFov(entity)
+                .Select(a => (char)a.Glyph)
+                //Merge in bright cells before FOV refresh.
+                .Union(farBrightCells)
+                //Take only unique cells as an array.
+                .Distinct();
+
+            // Draw visible cells to the FOV window
+            ReinitializeCharObjects(characters: cells, updateText: false);
+            UpdateText();
+        }
+
+        private IEnumerable<char> GetBrightCellsInFov(IEntity entity, int fovRadius)
+        {
+            return GridManager.Grid.GetExploredCellsInFov(entity, fovRadius)
+                .Where(a => a.LightProperties.Brightness > 0f)
+                .Select(a => (char)a.Glyph);
+        }
+
+        private readonly struct CharObj
+        {
+            public readonly char Glyph;
+            public readonly Color GlyphColor;
+            public readonly string Name;
+
+            public CharObj(char glyph, Color glyphColor, string name)
             {
-                foreach (var item in _charObjects.OrderBy(x => x.Key))
-                {
-                    _textConsole.Cursor.Print(new ColoredString("[" + item.Value.Glyph + "]:", item.Value.GlyphColor, Color.Transparent));
-                    _textConsole.Cursor.Print(" " + item.Value.Name);
-                    _textConsole.Cursor.CarriageReturn();
-                    _textConsole.Cursor.LineFeed();
-                }
+                Glyph = glyph;
+                GlyphColor = glyphColor;
+                Name = name;
             }
         }
 
-        class CharObj
-        {
-            public char Glyph;
-            public Color GlyphColor;
-            public string Name;
-        }
     }
 }
