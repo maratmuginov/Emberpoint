@@ -71,7 +71,6 @@ namespace Emberpoint.Core.UserInterface.Windows
             configs.SelectMany(config=> config.Tiles.Select(a => new KeyValuePair<char, BlueprintTile>(a.Glyph, a)));
 
         public void ReinitializeCharObjects(IEnumerable<char> characters, bool updateText = true)
-
         {
             _charObjects = new Dictionary<char, CharObj>(GetCharObjectPairs(characters));
 
