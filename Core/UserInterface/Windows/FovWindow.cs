@@ -65,12 +65,13 @@ namespace Emberpoint.Core.UserInterface.Windows
         private bool AllConfigFilesExist(IEnumerable<string> configPaths) => configPaths.All(File.Exists);
 
         private IEnumerable<BlueprintConfig> GetConfigurations(params string[] configPaths) =>
-            configPaths.Select(path => JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(path)));
+            configPaths.Select(path=> JsonConvert.DeserializeObject<BlueprintConfig>(File.ReadAllText(path)));
 
         private IEnumerable<KeyValuePair<char, BlueprintTile>> GetBlueprintConfigValuePairs(IEnumerable<BlueprintConfig> configs) =>
-            configs.SelectMany(config => config.Tiles.Select(a => new KeyValuePair<char, BlueprintTile>(a.Glyph, a)));
+            configs.SelectMany(config=> config.Tiles.Select(a => new KeyValuePair<char, BlueprintTile>(a.Glyph, a)));
 
-        private void ReinitializeCharObjects(IEnumerable<char> characters, bool updateText = true)
+        public void ReinitializeCharObjects(IEnumerable<char> characters, bool updateText = true)
+
         {
             _charObjects = new Dictionary<char, CharObj>(GetCharObjectPairs(characters));
 
@@ -96,6 +97,7 @@ namespace Emberpoint.Core.UserInterface.Windows
             return default;
         }
 
+
         private void UpdateText()
         {
             _textConsole.Clear();
@@ -109,7 +111,6 @@ namespace Emberpoint.Core.UserInterface.Windows
             if (_charObjects.Count > _maxLineRows)
                 _textConsole.Cursor.Print("<More Objects..>");
         }
-
         private void DrawCharObj(CharObj charObj)
         {
             _textConsole.Cursor.Print(new ColoredString("[" + charObj.Glyph + "]:", charObj.GlyphColor, Color.Transparent));
@@ -120,11 +121,10 @@ namespace Emberpoint.Core.UserInterface.Windows
 
         public void Update(IEntity entity)
         {
-            int radius = entity is Player ? Constants.Player.FieldOfViewRadius : entity.FieldOfViewRadius;
-            var farBrightCells = GetBrightCellsInFov(entity, radius + 3);
+            var farBrightCells = GetBrightCellsInFov(entity, Constants.Player.FieldOfViewRadius + 3);
 
             // Gets cells player can see after FOV refresh.
-            var cells = GridManager.Grid.GetExploredCellsInFov(entity)
+            var cells = GridManager.Grid.GetExploredCellsInFov(entity, Constants.Player.FieldOfViewRadius)
                 .Select(a => (char)a.Glyph)
                 //Merge in bright cells before FOV refresh.
                 .Union(farBrightCells)
@@ -142,7 +142,6 @@ namespace Emberpoint.Core.UserInterface.Windows
                 .Where(a => a.LightProperties.Brightness > 0f)
                 .Select(a => (char)a.Glyph);
         }
-
         private readonly struct CharObj
         {
             public readonly char Glyph;
